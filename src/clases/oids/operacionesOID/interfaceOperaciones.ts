@@ -1,6 +1,6 @@
-import { DatosIniciales } from "../DatosIniciales";
+import { DatosOidIniciales } from "../DatosOidIniciales";
 
 export interface InterfaceOperaciones {
-    datosIniciales: DatosIniciales;
+    datosIniciales: DatosOidIniciales;
     getNivel(nivelActual:number, nivelLleno:number): number;
   }

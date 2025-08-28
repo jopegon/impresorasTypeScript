@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { LeeJSON } from "./clases/LeeJSON";
 import { Impresora } from "./clases/Impresora";
-import { CapturaDatos } from "./CapturaDatos";
+import { ConsultaImpresora } from "./ConsultaImpresora";
 import path from "path";
 import { CadenaHtml } from "./clases/CadenaHtmlTabla";
 import { CadenasVistaImpresoras } from "./clases/CadenasVistaImpresoras";
@@ -47,9 +47,9 @@ app.get("/leeJson", async (request: Request, response: Response) => {
 
   impresoras = leer.getListaImpresoras();
   promesas = impresoras.map((impresora: Impresora) => {
-    let pp = new CapturaDatos(impresora);
+    let pp = new ConsultaImpresora(impresora);
 
-    return pp.obtenerDatos()
+    return pp.obtenerDatosImpresora()
       .then((resultado: Impresora) => {
         response.write(resultado.toString());
       })
@@ -69,7 +69,7 @@ app.get('/', async (request: Request, response: Response) => {
 
   const leer: LeeJSON = new LeeJSON();
 
-  let pp: CapturaDatos = new CapturaDatos();
+  let pp: ConsultaImpresora = new ConsultaImpresora();
 
   leer.cargaArchivo();
 
@@ -80,9 +80,9 @@ app.get('/', async (request: Request, response: Response) => {
 
   promesas = leer.getListaImpresoras().map(async (impresora: Impresora) => {
 
-    pp = new CapturaDatos(impresora);
+    pp = new ConsultaImpresora(impresora);
 
-    return pp.obtenerDatos().then((impExito) => {
+    return pp.obtenerDatosImpresora().then((impExito) => {
 
       if(impExito.getConectada()){
         response.write(cadenasHtml.getImpresora(impExito));
@@ -108,7 +108,7 @@ app.get("/lista", async (request: Request, response: Response) => {
 
   const leer: LeeJSON = new LeeJSON();
 
-  let pp: CapturaDatos = new CapturaDatos();
+  let pp: ConsultaImpresora = new ConsultaImpresora();
 
   let promesas: Promise<void>[] = [];
 
@@ -120,9 +120,9 @@ app.get("/lista", async (request: Request, response: Response) => {
 
   promesas = leer.getListaImpresoras().map(async (impresora: Impresora) => {
 
-    pp = new CapturaDatos(impresora);
+    pp = new ConsultaImpresora(impresora);
 
-    return pp.obtenerDatos().then((impExito) => {
+    return pp.obtenerDatosImpresora().then((impExito) => {
 
       if (impExito.getConectada() && (impExito.getNegro() <= 10)) {
 

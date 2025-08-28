@@ -1,9 +1,9 @@
-import { DatosIniciales } from "../DatosIniciales";
+import { DatosOidIniciales } from "../DatosOidIniciales";
 import { InterfaceOperaciones } from "./interfaceOperaciones";
 import { OperacionesGenericas } from "./operacionesGenericas";
 
 export class operacionesBizhub extends OperacionesGenericas {
-    datosIniciales: DatosIniciales = new DatosIniciales();
+    datosIniciales: DatosOidIniciales = new DatosOidIniciales();
 
     getNivel(nivelActual:number, nivelLleno:number): number {
 

@@ -1,6 +1,6 @@
-import { DatosIniciales } from "./DatosIniciales";
+import { DatosOidIniciales } from "./DatosOidIniciales";
 
-export class DatosIniciales5020i extends DatosIniciales {
+export class DatosIniciales5020i extends DatosOidIniciales {
 
     oidTonerLevelNegro: string = '1.3.6.1.4.1.18334.1.1.1.5.7.4.4.1.3.1';
     

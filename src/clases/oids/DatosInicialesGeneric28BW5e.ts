@@ -1,6 +1,6 @@
-import { DatosIniciales } from "./DatosIniciales";
+import { DatosOidIniciales } from "./DatosOidIniciales";
 
-export class DatosInicialesGeneric28BW5e extends DatosIniciales {
+export class DatosInicialesGeneric28BW5e extends DatosOidIniciales {
 
 
     // Datos erroneos puestos a posta, es impresora b/n sino la detecta color
