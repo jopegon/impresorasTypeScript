@@ -6,24 +6,19 @@ import { ConstructorOperacionesOID } from './clases/oids/operacionesOID/Construc
 
 export class ConsultaImpresora {
 
-  clientOptions = {
-    port: 161,
-    retries: 3,
-    timeout: 250,
-    version: snmp.Version2,
-    community: 'public'
-  };
-
-  oidsIniciales;
-  session;
-  impresora;
-  constructorDatosIniciales;
-  operaciones
-
   constructor(impresora) {
+    this.clientOptions = {
+      port: 161,
+      retries: 3,
+      timeout: 250,
+      version: snmp.Version2,
+      community: 'public'
+    };
     this.impresora = impresora;
     this.oidsIniciales = new DatosOidIniciales();
     this.constructorDatosIniciales = new ConstructorDatosIniciales();
+    this.operaciones = null;
+    this.session = null;
   }
 
   saluda() {
