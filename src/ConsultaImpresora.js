@@ -47,7 +47,7 @@ export class ConsultaImpresora {
   /*
   * Obtener el modelo de impresora
   */
-  async etapaIdentifiacion() {
+  async etapaIdentificacion() {
 
     try {
       const varbinds = await this.snmpGet(this.oidsIniciales.getOidsModelo());
@@ -141,7 +141,7 @@ export class ConsultaImpresora {
        una vez sabemos el modelo de impresora, podemos adaptar las siguientes etapas
        a las particularidades de cada modelo    
        */
-      await this.etapaIdentifiacion(); // Ejecuta la etapa de identificación
+      await this.etapaIdentificacion(); // Ejecuta la etapa de identificación
 
       await this.etapaDatosNegro(); // Ejecuta la etapa de datos negro
 
