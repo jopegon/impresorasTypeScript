@@ -81,6 +81,10 @@ export class ConsultaImpresora {
       nivelNegroLleno = this.getVarbinds(varbinds, this.oidsIniciales.getOidFullCapacityNegro());
 
       this.impresora.setNegro(this.operaciones.getNivel(nivelNegroActual, nivelNegroLleno));
+
+      //this.impresora.setNegro(obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelNegro(), 
+      //            this.oidsIniciales.getOidFullCapacityNegro()));
+
     } catch (error) {
       // Do nothing
     }
@@ -129,6 +133,15 @@ export class ConsultaImpresora {
       // Do nothing
     }
 
+  }
+
+  /*
+  *  Mejora realizada implantar en entorno real
+  */
+  async obtenerNivel(varbinds, oidActual, oidLleno) {
+    const actual = this.getVarbinds(varbinds, oidActual);
+    const lleno = this.getVarbinds(varbinds, oidLleno);
+    return this.operaciones.getNivel(actual, lleno);
   }
 
 
