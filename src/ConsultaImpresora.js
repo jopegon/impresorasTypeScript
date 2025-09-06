@@ -45,9 +45,11 @@ export class ConsultaImpresora {
   }
 
   /*
-  * Obtener el modelo de impresora
+  * Obtener el modelo de impresora, para que pueda utilizarse 
+  * por ConstructorDatosIniciales y ConstructorOperacionesOID
+  * para adaptar las siguientes etapas a cada modelo de impresora
   */
-  async etapaIdentificacion() {
+  async etapaObtenerModelo() {
 
     try {
       const varbinds = await this.snmpGet(this.oidsIniciales.getOidsModelo());
@@ -69,7 +71,7 @@ export class ConsultaImpresora {
     return this.impresora;
   }
 
-  async etapaDatosNegro() {
+  async etapaNivelesNegro() {
 
     let nivelNegroActual;
     let nivelNegroLleno;
@@ -86,25 +88,25 @@ export class ConsultaImpresora {
       //            this.oidsIniciales.getOidFullCapacityNegro()));
 
     } catch (error) {
-      // Do nothing
+      // No se hace nada porque puede que la impresora esté desconectada
     }
 
   }
 
 
 
-  async etapaDatosNumeroDeSerie() {
+  async etapaNumeroDeSerie() {
     try {
       const varbinds = await this.snmpGet(this.oidsIniciales.getOidsNumeroDeSerie());
       this.impresora.setNumeroDeSerie(this.getVarbinds(varbinds, this.oidsIniciales.getOidNumeroDeSerie().toString()));
     } catch (error) {
-      // Do nothing
+      // No se hace nada porque puede que la impresora esté desconectada
     }
   }
 
 
 
-  async etapaDatosColor() {
+  async etapaNivelesColor() {
 
     try {
       const varbinds = await this.snmpGet(this.oidsIniciales.getOidsColor());
@@ -130,7 +132,7 @@ export class ConsultaImpresora {
       this.impresora.setMagenta(this.operaciones.getNivel(nivelActual, nivelLleno));
 
     } catch (error) {
-      // Do nothing
+      // No se hace nada porque puede que la impresora no sea a color o que esté  desconectada
     }
 
   }
@@ -154,9 +156,9 @@ export class ConsultaImpresora {
        una vez sabemos el modelo de impresora, podemos adaptar las siguientes etapas
        a las particularidades de cada modelo    
        */
-      await this.etapaIdentificacion(); // Ejecuta la etapa de identificación
+      await this.etapaObtenerModelo(); // Ejecuta la etapa de identificación
 
-      await this.etapaDatosNegro(); // Ejecuta la etapa de datos negro
+      await this.etapaNivelesNegro(); // Ejecuta la etapa de datos negro
 
       /*
         hay que tratar de unir etapa datos negro y etapa dato numero de serie
@@ -164,15 +166,22 @@ export class ConsultaImpresora {
       */
 
 
-      await this.etapaDatosNumeroDeSerie();
+      await this.etapaNumeroDeSerie();
 
-      await this.etapaDatosColor(); // Ejecuta la etapa de datos color
+      await this.etapaNivelesColor(); // Ejecuta la etapa de datos color
 
     } catch (error) {
-      // No hacer nada
+      /*
+      * Es la manera de detectar impresora desconectada 
+        por defecto la clase impresora el valor conectada 
+        es siempre false, sólo se modifica si la etapa de 
+        obtener modelo impresora se realiza con éxito
+      */
     }
     finally {
-      this.session.close();
+      if (this.session) {
+        this.session.close();
+      }
     }
 
     return this.impresora;
