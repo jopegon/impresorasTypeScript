@@ -1,5 +1,5 @@
-import { DatosOidIniciales } from './clases/oids/DatosOidIniciales';
-import { ConstructorDatosIniciales } from './clases/oids/ConstructorDatosIniciales';
+import { OidIniciales } from './clases/oids/OidIniciales';
+import { ConstructorOids } from './clases/oids/ConstructorOids';
 import snmp from 'net-snmp';
 import { ConstructorOperacionesOID } from './clases/oids/operacionesOID/ConstructorOperacionesOid';
 
@@ -15,8 +15,8 @@ export class ConsultaImpresora {
       community: 'public'
     };
     this.impresora = impresora;
-    this.oidsIniciales = new DatosOidIniciales();
-    this.constructorDatosIniciales = new ConstructorDatosIniciales();
+    this.oidsIniciales = new OidIniciales();
+    this.constructorDatosIniciales = new ConstructorOids();
     this.operaciones = null;
     this.session = null;
   }
@@ -57,7 +57,7 @@ export class ConsultaImpresora {
       this.impresora.setModelo(this.getVarbinds(varbinds, this.oidsIniciales.getOidModelo()));
 
       // Adapto las propiedades de oids a cada impresora 
-      this.oidsIniciales = new ConstructorDatosIniciales().datosInicialesDe(this.impresora.getModelo());
+      this.oidsIniciales = new ConstructorOids().datosInicialesDe(this.impresora.getModelo());
 
       this.operaciones = new ConstructorOperacionesOID().operacionesModelo(this.impresora.getModelo());
 
@@ -79,13 +79,13 @@ export class ConsultaImpresora {
     try {
       const varbinds = await this.snmpGet(this.oidsIniciales.getOidsBN());
 
-      nivelNegroActual = this.getVarbinds(varbinds, this.oidsIniciales.getOidTonerLevelNegro());
-      nivelNegroLleno = this.getVarbinds(varbinds, this.oidsIniciales.getOidFullCapacityNegro());
+      //nivelNegroActual = this.getVarbinds(varbinds, this.oidsIniciales.getOidTonerLevelNegro());
+      //nivelNegroLleno = this.getVarbinds(varbinds, this.oidsIniciales.getOidFullCapacityNegro());
 
-      this.impresora.setNegro(this.operaciones.getNivel(nivelNegroActual, nivelNegroLleno));
+      //this.impresora.setNegro(this.operaciones.getNivel(nivelNegroActual, nivelNegroLleno));
 
-      //this.impresora.setNegro(obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelNegro(), 
-      //            this.oidsIniciales.getOidFullCapacityNegro()));
+      this.impresora.setNegro(this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelNegro(), 
+                  this.oidsIniciales.getOidFullCapacityNegro()));
 
     } catch (error) {
       // No se hace nada porque puede que la impresora esté desconectada
@@ -113,23 +113,15 @@ export class ConsultaImpresora {
 
       this.impresora.setColor(true);
 
-      let nivelActual;
-      let nivelLleno;
+      this.impresora.setCyan(this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelCyan(), 
+                  this.oidsIniciales.getOidFullCapacityCyan()));
 
-      nivelActual = this.getVarbinds(varbinds, this.oidsIniciales.getOidTonerLevelCyan());
-      nivelLleno = this.getVarbinds(varbinds, this.oidsIniciales.getOidFullCapacityCyan());
+      this.impresora.setAmarillo(this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelAmarillo(), 
+                  this.oidsIniciales.getOidFullCapacityAmarillo()));
 
-      this.impresora.setCyan(this.operaciones.getNivel(nivelActual, nivelLleno));
+      this.impresora.setMagenta(this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelMagenta(), 
+                  this.oidsIniciales.getOidFullCapacityMagenta()));
 
-      nivelActual = this.getVarbinds(varbinds, this.oidsIniciales.getOidTonerLevelAmarillo());
-      nivelLleno = this.getVarbinds(varbinds, this.oidsIniciales.getOidFullCapacityAmarillo());
-
-      this.impresora.setAmarillo(this.operaciones.getNivel(nivelActual, nivelLleno));
-
-      nivelActual = this.getVarbinds(varbinds, this.oidsIniciales.getOidTonerLevelMagenta());
-      nivelLleno = this.getVarbinds(varbinds, this.oidsIniciales.getOidFullCapacityMagenta());
-
-      this.impresora.setMagenta(this.operaciones.getNivel(nivelActual, nivelLleno));
 
     } catch (error) {
       // No se hace nada porque puede que la impresora no sea a color o que esté  desconectada

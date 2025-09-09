@@ -1,7 +1,5 @@
-//import { DatosIniciales } from "../DatosIniciales";
-//import { DatosIniciales5020i } from "../DatosIniciales5020i";
-import { operacionesBizhub } from "./operacionesBizHubKonica";
-import { OperacionesGenericas } from "./operacionesGenericas";
+import { operacionesBizhub } from "./OperacionesBizHubKonica";
+import { OperacionesGenericas } from "./OperacionesGenericas";
 
 
 export class ConstructorOperacionesOID {
