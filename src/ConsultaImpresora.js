@@ -57,7 +57,7 @@ export class ConsultaImpresora {
       this.impresora.setModelo(this.getVarbinds(varbinds, this.oidsIniciales.getOidModelo()));
 
       // Adapto las propiedades de oids a cada impresora 
-      this.oidsIniciales = new ConstructorOids().datosInicialesDe(this.impresora.getModelo());
+      this.oidsIniciales = new ConstructorOids().OidsInicialesDe(this.impresora.getModelo());
 
       this.operaciones = new ConstructorOperacionesOID().operacionesModelo(this.impresora.getModelo());
 
