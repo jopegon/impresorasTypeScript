@@ -1,0 +1,12 @@
+import { OidIniciales } from "./OidIniciales";
+
+export class OidsC405 extends OidIniciales {
+
+    oidTonerLevelCyan: string = '1.3.6.1.2.1.43.11.1.1.9.1.4';
+    oidFullCapacityCyan: string = '1.3.6.1.2.1.43.11.1.1.8.1.4';
+
+    oidTonerLevelAmarillo: string = '1.3.6.1.2.1.43.11.1.1.9.1.2';
+    oidFullCapacityAmarillo: string = '1.3.6.1.2.1.43.11.1.1.8.1.2';
+
+}
+
