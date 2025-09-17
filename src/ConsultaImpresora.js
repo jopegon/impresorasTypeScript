@@ -32,8 +32,8 @@ export class ConsultaImpresora {
     return varbinds.filter((p) => p.oid === oid).map((p) => p.value)
   }
 
-  snmpGet(oids) {
-    return new Promise((resolve, reject) => {
+  async snmpGet(oids) {
+    return await new Promise((resolve, reject) => {
       this.session.get(oids, (error, varbinds) => {
         if (error) {
           reject(error);
