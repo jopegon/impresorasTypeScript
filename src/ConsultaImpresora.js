@@ -32,8 +32,8 @@ export class ConsultaImpresora {
     return varbinds.filter((p) => p.oid === oid).map((p) => p.value)
   }
 
-  snmpGet(oids) {
-    return new Promise((resolve, reject) => {
+  async snmpGet(oids) {
+    return await new Promise((resolve, reject) => {
       this.session.get(oids, (error, varbinds) => {
         if (error) {
           reject(error);
@@ -73,19 +73,12 @@ export class ConsultaImpresora {
 
   async etapaNivelesNegro() {
 
-    let nivelNegroActual;
-    let nivelNegroLleno;
-
+ 
     try {
       const varbinds = await this.snmpGet(this.oidsIniciales.getOidsBN());
+      
 
-      //nivelNegroActual = this.getVarbinds(varbinds, this.oidsIniciales.getOidTonerLevelNegro());
-      //nivelNegroLleno = this.getVarbinds(varbinds, this.oidsIniciales.getOidFullCapacityNegro());
-
-      //this.impresora.setNegro(this.operaciones.getNivel(nivelNegroActual, nivelNegroLleno));
-
-      this.impresora.setNegro(this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelNegro(), 
-                  this.oidsIniciales.getOidFullCapacityNegro()));
+      this.impresora.setNegro(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelNegro(), this.oidsIniciales.getOidFullCapacityNegro()));
 
     } catch (error) {
       // No se hace nada porque puede que la impresora esté desconectada
@@ -113,13 +106,13 @@ export class ConsultaImpresora {
 
       this.impresora.setColor(true);
 
-      this.impresora.setCyan(this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelCyan(), 
+      this.impresora.setCyan(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelCyan(), 
                   this.oidsIniciales.getOidFullCapacityCyan()));
 
-      this.impresora.setAmarillo(this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelAmarillo(), 
+      this.impresora.setAmarillo(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelAmarillo(), 
                   this.oidsIniciales.getOidFullCapacityAmarillo()));
 
-      this.impresora.setMagenta(this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelMagenta(), 
+      this.impresora.setMagenta(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelMagenta(), 
                   this.oidsIniciales.getOidFullCapacityMagenta()));
 
 
@@ -133,6 +126,7 @@ export class ConsultaImpresora {
   *  Mejora realizada implantar en entorno real
   */
   async obtenerNivel(varbinds, oidActual, oidLleno) {
+    
     const actual = this.getVarbinds(varbinds, oidActual);
     const lleno = this.getVarbinds(varbinds, oidLleno);
     return this.operaciones.getNivel(actual, lleno);
