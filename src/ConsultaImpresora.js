@@ -77,7 +77,6 @@ export class ConsultaImpresora {
     try {
       const varbinds = await this.snmpGet(this.oidsIniciales.getOidsBN());
       
-
       this.impresora.setNegro(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelNegro(), this.oidsIniciales.getOidFullCapacityNegro()));
 
     } catch (error) {

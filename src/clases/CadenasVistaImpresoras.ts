@@ -124,9 +124,11 @@ getEncabezado():string{
     <meta charset="UTF-8" />
     <title>Nivel tóner</title>   
 
-    <link rel="stylesheet" href="/bootstrap/bootstrap.min.css" />
-    <script src="/js/bootstrap.js"></script>
- 
+    <link rel="stylesheet" href="/bootstrapCss/bootstrap.min.css" />
+    <!-- <link rel="stylesheet" href="/bootstrap/bootstrap.min.css" />-->
+    <!-- <script src="/js/bootstrap.js"></script> -->
+    <script src="/bootStrapJs/bootstrap.js"></script> 
+    
     <link rel="stylesheet" href="/css/vistaImpresoras.css" />
    
   </head>

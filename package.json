@@ -3,15 +3,17 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && node dist/index.js",
+    "start": "npm run build && node dist/src/index.js",
+    "start2": "tsc && node dist/index.js",
     "watch": "nodemon -e ts --exec \"npm run start\"",
     "build": "npx tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
-  }, 
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/express": "^5.0.0",
     "@types/node": "^22.8.4",
     "nodemon": "^3.1.7",
@@ -19,7 +21,8 @@
   },
   "dependencies": {
     "@types/ejs": "^3.1.5",
-    "bootstrap": "^5.3.3",
+    "better-sqlite3": "^12.2.0",
+    "bootstrap": "^5.3.8",
     "ejs": "^3.1.10",
     "express": "^4.21.1",
     "net-snmp": "^3.15.1"
