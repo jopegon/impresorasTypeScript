@@ -1,10 +1,14 @@
 import express, { Request, Response } from "express";
-import { LeeJSON } from "./clases/LeeJSON";
+
+
+import path from "path";
+import { LeeJSON } from "./models/LeeJSON";
 import { Impresora } from "./clases/Impresora";
 import { ConsultaImpresora } from "./ConsultaImpresora";
-import path from "path";
-import { CadenaHtml } from "./clases/CadenaHtmlTabla";
+
 import { CadenasVistaImpresoras } from "./clases/CadenasVistaImpresoras";
+import { CadenaHtml } from "./clases/CadenaHtmlTabla";
+import { IpService } from "./services/IpService";
 
 const app = express();
 
@@ -12,12 +16,17 @@ const PORT = 3000;
 
 app.use(express.static('public'))
 
-app.use('/bootstrap', express.static(path.join(__dirname, '../node_modules/bootstrap/dist/css')));
-
-app.use('/js', express.static(path.join(__dirname, '../node_modules/bootstrap/dist/js')));
+app.use('/js', express.static(path.join(__dirname, './node_modules/bootstrap/dist/js')));
 app.use('/img', express.static(path.join(__dirname, './public/img')));
 app.use('/css', express.static(path.join(__dirname, './public/css')));
 app.use('/jss', express.static(path.join(__dirname, './public/js')));
+
+
+app.use("/bootstrapCss",  express.static(path.join(process.cwd(), "./node_modules/bootstrap/dist/css/")));
+app.use("/bootStrapJs",  express.static(path.join(process.cwd(), "./node_modules/bootstrap/dist/js/")));
+// Printing current directory
+console.log("Current working directory: ",
+    process.cwd());
 
 //app.set('/views',  express.static(path.join(__dirname, './public/views')));
 app.set('views', path.join(__dirname, './public/views'));
@@ -25,17 +34,17 @@ app.set('views', path.join(__dirname, './public/views'));
 
 app.set('view engine', 'ejs');
 
-// sendFile will go here
+
 app.get('/hola', (req, res) => {
 
-  res.sendFile(path.join(__dirname, 'views/indexF.html'));
+  res.sendFile(path.join(app.get('views'), '/indexF.html'));
 
 });
 
 
 
 app.get("/test", (request: Request, response: Response) => {
-  response.status(200).send("Hello Worldfa");
+  response.status(200).send("Hello Worldfa!!!!");
 });
 
 app.get("/leeJson", async (request: Request, response: Response) => {
@@ -64,21 +73,49 @@ app.get("/leeJson", async (request: Request, response: Response) => {
 });
 
 
+app.get("/leeDB", async (request: Request, response: Response) => {
+
+
+  let impresoras: Impresora[] = [];
+  let promesas: Promise<void>[] = [];
+  
+  impresoras = IpService.findAllPrinters() || [];
+
+  promesas = impresoras.map((impresora: Impresora) => {
+    let pp = new ConsultaImpresora(impresora);
+
+    return pp.obtenerDatosImpresora()
+      .then((resultado: Impresora) => {
+        response.write(resultado.toString());
+      })
+      .catch((error: Impresora) => {
+        response.write(`No conecta ${error.getIp()} \n`);
+      });
+  });
+
+  await Promise.all(promesas);
+
+  response.end(); // Termina la respuesta después de completar todas las operaciones
+
+});
+
+
 // sendFile will go here
 app.get('/', async (request: Request, response: Response) => {
 
-  const leer: LeeJSON = new LeeJSON();
+  //const leer: LeeJSON = new LeeJSON();
+  //leer.cargaArchivo();
 
   let pp: ConsultaImpresora = new ConsultaImpresora();
-
-  leer.cargaArchivo();
 
   let promesas: Promise<void>[] = [];
 
   let cadenasHtml = new CadenasVistaImpresoras();
   response.write(cadenasHtml.getEncabezado());
 
-  promesas = leer.getListaImpresoras().map(async (impresora: Impresora) => {
+  //promesas = leer.getListaImpresoras().map(async (impresora: Impresora) => {
+
+  promesas = IpService.findAllPrinters().map(async (impresora: Impresora) => {
 
     pp = new ConsultaImpresora(impresora);
 
@@ -106,19 +143,22 @@ app.get('/', async (request: Request, response: Response) => {
 
 app.get("/lista", async (request: Request, response: Response) => {
 
-  const leer: LeeJSON = new LeeJSON();
-
+  //const leer: LeeJSON = new LeeJSON();
+  //leer.cargaArchivo();
   let pp: ConsultaImpresora = new ConsultaImpresora();
 
   let promesas: Promise<void>[] = [];
 
   let cadenasHtml = new CadenaHtml();
 
-  leer.cargaArchivo();
+  
 
   response.write(cadenasHtml.getEncabezado());
 
-  promesas = leer.getListaImpresoras().map(async (impresora: Impresora) => {
+
+  promesas = IpService.findAllPrinters().map(async (impresora: Impresora) => {
+
+  //promesas = leer.getListaImpresoras().map(async (impresora: Impresora) => {
 
     pp = new ConsultaImpresora(impresora);
 
@@ -192,7 +232,7 @@ app.get("/contador", async (request: Request, response:Response) => {
 
 
 app.listen(PORT, () => {
-  console.log("Server running at PORT ", PORT);
+  console.log(`Server running at PORT, http://localhost:${PORT}`);
 
   /*
   const leer: LeeJSON = new LeeJSON();
