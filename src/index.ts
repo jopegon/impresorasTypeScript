@@ -3,11 +3,11 @@ import express, { Request, Response } from "express";
 
 import path from "path";
 import { LeeJSON } from "./models/LeeJSON";
-import { Impresora } from "./clases/Impresora";
-import { ConsultaImpresora } from "./ConsultaImpresora";
+import { Impresora } from "./models/Impresora";
+import { ConsultaImpresora } from "./services/ConsultaImpresora";
 
-import { CadenasVistaImpresoras } from "./clases/CadenasVistaImpresoras";
-import { CadenaHtml } from "./clases/CadenaHtmlTabla";
+import { CadenasVistaImpresoras } from "./server/CadenasVistaImpresoras";
+import { CadenaHtml } from "./server/CadenaHtmlTabla";
 import { IpService } from "./services/IpService";
 
 const app = express();

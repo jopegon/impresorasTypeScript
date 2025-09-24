@@ -1,4 +1,4 @@
-import { Impresora } from "./Impresora";
+import { Impresora } from "../models/Impresora";
 
 export class CadenasVistaImpresoras {
 

@@ -14,6 +14,7 @@ export class Impresora {
 
   color: boolean = false;
   conectada: boolean = false;
+  contador: number=0;
 
   constructor(ip: string, localizacion: string) {
     this.ip = ip;
@@ -149,6 +150,13 @@ export class Impresora {
     this.conectada = conectada;
   }
 
+  setContador(contador:number){
+    this.contador=contador;
+  }
+
+  getContador(){
+    return this.contador;
+  }
  
   toString(): string {
     let cadena:string;

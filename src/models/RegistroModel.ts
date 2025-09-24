@@ -4,12 +4,12 @@ export interface RegistroInterface {
     fecha: string;
     hora: string;
     ip: string;
-    conectada: number;
+    conectada: boolean;
     numSerie: string;
     modelo: string;
     contador: number;
     negro: number;
-    color:number;
+    color:boolean;
     cyan: number;
     amarillo: number;
     rojo: number;

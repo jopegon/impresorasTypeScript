@@ -1,4 +1,4 @@
-import { Impresora } from "../clases/Impresora";
+import { Impresora } from "./Impresora";
 
 import fs from 'fs';
 

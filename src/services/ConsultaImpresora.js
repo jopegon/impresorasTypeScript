@@ -1,7 +1,7 @@
-import { OidIniciales } from './clases/oids/OidIniciales';
-import { ConstructorOids } from './clases/oids/ConstructorOids';
+import { OidIniciales } from '../clases/oids/OidIniciales';
+import { ConstructorOids } from '../clases/oids/ConstructorOids';
 import snmp from 'net-snmp';
-import { ConstructorOperacionesOID } from './clases/oids/operacionesOID/ConstructorOperacionesOid';
+import { ConstructorOperacionesOID } from '../clases/oids/operacionesOID/ConstructorOperacionesOid';
 
 
 export class ConsultaImpresora {
