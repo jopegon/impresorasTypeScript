@@ -3,11 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-<<<<<<< HEAD
     "start": "npm run build && node dist/index.js",
-=======
-    "start": "npm run build && node dist/src/index.js",
->>>>>>> 35ed52a5d00e2a26097799ee57299d28e3424532
     "start2": "tsc && node dist/index.js",
     "watch": "nodemon -e ts --exec \"npm run start\"",
     "build": "npx tsc",

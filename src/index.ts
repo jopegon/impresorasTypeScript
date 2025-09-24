@@ -16,45 +16,29 @@ const PORT = 3000;
 
 app.use(express.static('public'))
 
-<<<<<<< HEAD
 app.use('/js', express.static(path.join(__dirname, './node_modules/bootstrap/dist/js')));
 app.use('/img', express.static(path.join(__dirname, './public/img')));
 app.use('/css', express.static(path.join(__dirname, './public/css')));
 app.use('/jss', express.static(path.join(__dirname, './public/js')));
-=======
-app.use('/js', express.static(path.join(__dirname, '../node_modules/bootstrap/dist/js')));
-app.use('/img', express.static(path.join(__dirname, '../public/img')));
-app.use('/css', express.static(path.join(__dirname, '../public/css')));
-app.use('/jss', express.static(path.join(__dirname, '../public/js')));
-
 
 app.use("/bootstrapCss",  express.static(path.join(process.cwd(), "./node_modules/bootstrap/dist/css/")));
 app.use("/bootStrapJs",  express.static(path.join(process.cwd(), "./node_modules/bootstrap/dist/js/")));
 // Printing current directory
-console.log("Current working directory: ",
-    process.cwd());
->>>>>>> 35ed52a5d00e2a26097799ee57299d28e3424532
+//console.log("Current working directory: ", process.cwd());
 
 
 app.use("/bootstrapCss",  express.static(path.join(process.cwd(), "./node_modules/bootstrap/dist/css/")));
 app.use("/bootStrapJs",  express.static(path.join(process.cwd(), "./node_modules/bootstrap/dist/js/")));
-// Printing current directory
-console.log("Current working directory: ",
-    process.cwd());
 
-//app.set('/views',  express.static(path.join(__dirname, './public/views')));
 app.set('views', path.join(__dirname, '../public/views'));
 
-
 app.set('view engine', 'ejs');
-
 
 app.get('/hola', (req, res) => {
 
   res.sendFile(path.join(app.get('views'), '/indexF.html'));
 
 });
-
 
 
 app.get("/test", (request: Request, response: Response) => {

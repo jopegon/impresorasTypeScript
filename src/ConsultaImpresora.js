@@ -14,11 +14,20 @@ export class ConsultaImpresora {
       version: snmp.Version2,
       community: 'public'
     };
+    
     this.impresora = impresora;
     this.oidsIniciales = new OidIniciales();
     this.constructorDatosIniciales = new ConstructorOids();
     this.operaciones = null;
     this.session = null;
+  }
+
+  setTimeout(timeout) {
+    this.timeout=timeout;
+  }
+
+  getTimeout() {
+    return this.timeout;
   }
 
   saluda() {
