@@ -12,8 +12,8 @@ getEncabezado():string{
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nivel tóner</title>
     
-    <link rel="stylesheet" href="/bootstrap/bootstrap.min.css" />
-    <script src="/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="/bootstrapCss/bootstrap.min.css">
+    <script src="/bootStrapJs/bootstrap.js"></script>
 
     <style>
 

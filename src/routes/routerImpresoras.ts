@@ -1,17 +1,16 @@
 import { Router, Request, Response } from 'express';
 
+import { contador, leeDB, lista, muestraInfo, paginaInicio, saluda } from '../controler/controlerImpresora';
+
 
 const routerImpresoras = Router();
 
-export const saluda = async (req: Request, res: Response) => {
-    try {
-        res.status(200).send("Hello !!!!");
-    } catch (error) {
-        console.error('Error al consultar impresoras:', error);
-        res.status(500).json({ error: 'Error interno del servidor al consultar impresoras.' });
-    }
-};
 
-routerImpresoras.get('/', saluda);
+routerImpresoras.get('/leeDB', leeDB);
+routerImpresoras.get('', muestraInfo);
+routerImpresoras.get('/lista', lista);
+routerImpresoras.get('/contador', contador);
+routerImpresoras.get('/saluda', saluda);
+routerImpresoras.get('/file.htm', paginaInicio);
 
 export default routerImpresoras;
