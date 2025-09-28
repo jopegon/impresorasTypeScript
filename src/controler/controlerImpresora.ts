@@ -1,7 +1,7 @@
 import path from "path";
 import { Impresora } from "../clases/Impresora";
-import { CadenaHtml } from "../server/CadenaHtmlTabla";
-import { CadenasVistaImpresoras } from "../server/CadenasVistaImpresoras";
+import { CadenaHtml } from "./CadenaHtmlTabla";
+import { CadenasVistaImpresoras } from "./CadenasVistaImpresoras";
 import { ConsultaImpresora } from "../services/ConsultaImpresora";
 import { IpService } from "../services/IpService";
 import { Request, Response } from 'express';

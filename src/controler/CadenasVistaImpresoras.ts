@@ -1,4 +1,5 @@
 import { Impresora } from "../clases/Impresora";
+import { getLocalIP } from "../server/server";
 
 export class CadenasVistaImpresoras {
 
@@ -168,7 +169,7 @@ getEncabezado():string{
           <option value="impresoraColorfalse">B/N</option>
       </select>
 
-      <a  target="_blank" href="http://10.41.81.26:3500/records/help">__</a>
+      <a  target="_blank" href="http://${getLocalIP()}:3000/records/help">__</a>
        <p class="m-2" id="elementosListados"></p>
 
        
@@ -193,3 +194,5 @@ getFinal():string{
 }
 
 }
+
+

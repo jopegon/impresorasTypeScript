@@ -5,6 +5,7 @@ import { InterfaceIp } from "../models/IpModel";
 
 
 export class IpService {
+  
   static create(ip: string, localizacion: string, observaciones?: string) {
     const stmt = db.prepare(`
       INSERT INTO ips (ip, localizacion, observaciones)
