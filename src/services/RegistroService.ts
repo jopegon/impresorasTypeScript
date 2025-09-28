@@ -1,4 +1,4 @@
-import { Impresora } from "../models/Impresora";
+import { Impresora } from "../clases/Impresora";
 import db from "../config/db";
 
 import { RegistroInterface } from "../models/RegistroModel";

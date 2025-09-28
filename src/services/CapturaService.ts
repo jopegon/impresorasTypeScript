@@ -1,4 +1,4 @@
-import { Impresora } from "../models/Impresora";
+import { Impresora } from "../clases/Impresora";
 import { ConsultaImpresora } from "./ConsultaImpresora";
 import { RegistroInterface } from "../models/RegistroModel";
 import { IpService } from "./IpService";

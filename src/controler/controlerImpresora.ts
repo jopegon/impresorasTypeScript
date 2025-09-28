@@ -1,5 +1,5 @@
 import path from "path";
-import { Impresora } from "../models/Impresora";
+import { Impresora } from "../clases/Impresora";
 import { CadenaHtml } from "../server/CadenaHtmlTabla";
 import { CadenasVistaImpresoras } from "../server/CadenasVistaImpresoras";
 import { ConsultaImpresora } from "../services/ConsultaImpresora";
@@ -47,7 +47,13 @@ export const leeDB = async (req: Request, res: Response) => {
     }
 };
 
-
+/*
+* Muestra la información de las impresoras en formato HTML
+* @param request - Objeto de solicitud HTTP
+* @param response - Objeto de respuesta HTTP        
+* 
+* Es el punto de entrada para la ruta que muestra la información de las impresoras.
+*/
 export const muestraInfo = async (request: Request, response: Response) => {
     let pp: ConsultaImpresora = new ConsultaImpresora();
 
@@ -84,7 +90,6 @@ export const muestraInfo = async (request: Request, response: Response) => {
 };
 
 export const paginaInicio = (req: Request, res: Response) => {
-    console.log('asdfadf a adsfasdfa dasf ' + __dirname);
     res.sendFile(path.join(__dirname, "../../public/views", "/indexF.html"));
 };
 
@@ -126,7 +131,7 @@ export const lista = async (request: Request, response: Response) => {
                 }
 
             }
-            response.write(`  ${impresora.getModelo()}</td>  <td>asdfadf asd<a href="http://${impresora.getIp()}" target="_blank">${impresora.getIp()}</a></td> <td> ${impresora.getNumeroDeSerie()} </td>  <td>${impresora.getLocalizacion()}</td>
+            response.write(`  ${impresora.getModelo()}</td>  <td> <a href="http://${impresora.getIp()}" target="_blank">${impresora.getIp()}</a></td> <td> ${impresora.getNumeroDeSerie()} </td>  <td>${impresora.getLocalizacion()}</td>
         <td>${impresora.getConectadaSiNo()}</td>
     <td>${impresora.getNegro()} %</td>`);
             if (impresora.getColor()) {
