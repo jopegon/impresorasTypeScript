@@ -6,6 +6,7 @@ import { ConstructorOperacionesOID } from '../clases/oids/operacionesOID/Constru
 
 export class ConsultaImpresora {
 
+  
   constructor(impresora) {
     this.clientOptions = {
       port: 161,

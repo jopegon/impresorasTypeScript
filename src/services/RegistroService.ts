@@ -1,4 +1,3 @@
-import { Impresora } from "../clases/Impresora";
 import db from "../config/db";
 
 import { RegistroInterface } from "../models/RegistroModel";
@@ -81,5 +80,8 @@ INSERT INTO registros (fecha, hora, ip, conectada, numSerie, modelo, contador, c
   static delete(id: number) {
     return db.prepare("DELETE FROM registros WHERE id = ?").run(id);
   }
+
 }
+
+
 

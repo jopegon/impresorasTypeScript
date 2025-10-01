@@ -5,6 +5,7 @@ import routerImpresoras from "../routes/routerImpresoras";
 import path from "path";
 import routerRegistro from "../routes/routerApiRegistros";
 import os from "os";
+import routerChart from "../routes/routerChart";
 
 
 export const getLocalIP = (): string | undefined => {
@@ -83,6 +84,10 @@ export class Server {
         this.app.use("/bootstrapCss", express.static(path.join(process.cwd(), "./node_modules/bootstrap/dist/css/")));
         this.app.use("/bootStrapJs", express.static(path.join(process.cwd(), "./node_modules/bootstrap/dist/js/")));
 
+        this.app.use("/chartJs", express.static(path.join(process.cwd(), "./node_modules/chart.js/dist")));
+        this.app.use("/chartJsAdapter", express.static(path.join(process.cwd(), "./node_modules/chartjs-adapter-date-fns/dist")));
+
+
         // Printing current directory
         //console.log("Current working directory: ", process.cwd());
 
@@ -105,6 +110,7 @@ export class Server {
     private routes() {
         this.app.use('', routerImpresoras);
         this.app.use('/records', routerRegistro);
+        this.app.use('/chart', routerChart);
         //this.app.use('/ips', routesIp);
         //this.app.use('/id', routesJwt)
         //this.app.use('/api/users', routesUser);

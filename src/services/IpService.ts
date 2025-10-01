@@ -5,7 +5,7 @@ import { InterfaceIp } from "../models/IpModel";
 
 
 export class IpService {
-  
+
   static create(ip: string, localizacion: string, observaciones?: string) {
     const stmt = db.prepare(`
       INSERT INTO ips (ip, localizacion, observaciones)
@@ -22,12 +22,18 @@ export class IpService {
   static findAllPrinters(): Impresora[] {
     let resultadoConsulta: InterfaceIp[] = [];
     let impresoras: Impresora[] = [];
-    resultadoConsulta=db.prepare("SELECT * FROM ips").all() as InterfaceIp[];
-    resultadoConsulta.map((resultado:InterfaceIp) => {
+    resultadoConsulta = db.prepare("SELECT * FROM ips").all() as InterfaceIp[];
+    resultadoConsulta.map((resultado: InterfaceIp) => {
       impresoras.push(new Impresora(resultado.ip, resultado.localizacion));
     });
-    
+
     return impresoras;
+  }
+
+  static findAllIPs(): InterfaceIp[] {
+    let listadoIps: InterfaceIp[] = [];
+    listadoIps = db.prepare("SELECT * FROM ips").all() as InterfaceIp[];
+    return listadoIps;
   }
 
   static findByIp(ip: string): InterfaceIp | undefined {
@@ -38,4 +44,4 @@ export class IpService {
     return db.prepare("DELETE FROM ips WHERE id = ?").run(id);
   }
 }
-  
+
