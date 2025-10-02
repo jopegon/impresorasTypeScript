@@ -73,8 +73,8 @@ INSERT INTO registros (fecha, hora, ip, conectada, numSerie, modelo, contador, c
     return registros;
   }
 
-  static findByIp(ip: string): RegistroInterface | undefined {
-    return db.prepare("SELECT * FROM registros WHERE ip = ?").get(ip) as RegistroInterface | undefined;
+  static findByIp(ip: string): RegistroInterface[] | [] {
+    return db.prepare("SELECT * FROM registros WHERE ip = ? ORDER  BY fecha ASC").all(ip) as RegistroInterface[] | []
   }
 
   static delete(id: number) {

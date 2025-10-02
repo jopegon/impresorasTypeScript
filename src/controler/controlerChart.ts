@@ -1,6 +1,5 @@
 
 import { Request, Response } from 'express';
-import { RegistroService } from '../services/RegistroService';
 import { ChartService } from '../services/ChartService';
 
 
@@ -26,7 +25,7 @@ export class ControlerChart {
   static showchartIp (req: Request, res: Response) {
     try {
       const ip = req.params.ip;
-      console.log('IP recibida:', ip);
+
       const datasets = ChartService.getDataForIPChart(ip);
       
       //console.log('Enviando datasets al template:', datasets);
