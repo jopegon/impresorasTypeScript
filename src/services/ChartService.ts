@@ -18,18 +18,21 @@ export class ChartService {
       // Los registros ya estan ordenados por fecha descendente
       let registros = RegistroService.findByIp(ip);
   
-      for (let i = 2; i < registros.length+1 ; i++) {
-        if (registros[i-2].numSerie == registros[i-1].numSerie) {
-          registros[i-2].contador= registros[i-1].contador - registros[i-2].contador;
-          if (registros[i-2].contador < 0) {
-            registros[i-2].contador=0;
+      for (let i = registros.length-1; i >= 1; i--) {
+
+
+      
+        if (registros[i].numSerie == registros[i-1].numSerie ) {
+          registros[i].contador= registros[i].contador - registros[i-1].contador;
+          if (registros[i].contador < 0) {
+            registros[i].contador=0;
           }
         }
         else {
-          registros[i-2].contador=0;
+          registros[i].contador=0;
         }        
       }
-      registros.pop();
+      registros[0].contador=0 // Elimino el último registro que no tiene con qué comparar
       
 
       registros.forEach((registro: RegistroInterface) => {
