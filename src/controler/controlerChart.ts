@@ -1,6 +1,8 @@
 
 import { Request, Response } from 'express';
 import { ChartService } from '../services/ChartService';
+import { IpService } from '../services/IpService';
+import { RegistroService } from '../services/RegistroService';
 
 
 export class ControlerChart {
@@ -26,6 +28,12 @@ export class ControlerChart {
     try {
       const ip = req.params.ip;
 
+      const ipData = IpService.findByIp(ip);
+      
+      const lastRecord = RegistroService.getLastRecordConectedByIp(ip);
+
+      //constPrinter = IpService.getPrintersByIp(ip);
+
       const datasets = ChartService.getDataForIPChart(ip);
       
       //console.log('Enviando datasets al template:', datasets);
@@ -33,6 +41,8 @@ export class ControlerChart {
       
       res.render('chart', {
         title: 'Gráfico de Contadores por IP',
+        ipData: ipData,
+        lastRecord: lastRecord,
         datasetsJSON: JSON.stringify(datasets)  // Solo la versión stringificada
       });
     } catch (error) {

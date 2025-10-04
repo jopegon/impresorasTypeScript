@@ -77,6 +77,10 @@ INSERT INTO registros (fecha, hora, ip, conectada, numSerie, modelo, contador, c
     return db.prepare("SELECT * FROM registros WHERE ip = ? ORDER  BY fecha ASC").all(ip) as RegistroInterface[] | []
   }
 
+  static getLastRecordConectedByIp(ip: string): RegistroInterface | [] {
+    return db.prepare("SELECT * FROM registros WHERE ip = ? AND conectada = 1 ORDER BY fecha DESC, hora DESC LIMIT 1").get(ip) as RegistroInterface | []
+  }
+
   static delete(id: number) {
     return db.prepare("DELETE FROM registros WHERE id = ?").run(id);
   }
