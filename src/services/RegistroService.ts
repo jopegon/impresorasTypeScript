@@ -74,15 +74,53 @@ INSERT INTO registros (fecha, hora, ip, conectada, numSerie, modelo, contador, c
   }
 
   static findByIp(ip: string): RegistroInterface[] | [] {
-    return db.prepare("SELECT * FROM registros WHERE ip = ? ORDER  BY fecha ASC").all(ip) as RegistroInterface[] | []
+    return db.prepare("SELECT * FROM registros WHERE ip = ? ORDER  BY fecha ASC").all(ip) as RegistroInterface[] | RegistroInterface[]
   }
 
-  static getLastRecordConectedByIp(ip: string): RegistroInterface | [] {
-    return db.prepare("SELECT * FROM registros WHERE ip = ? AND conectada = 1 ORDER BY fecha DESC, hora DESC LIMIT 1").get(ip) as RegistroInterface | []
+  static getLastRecordConectedByIp(ip: string): RegistroInterface | undefined{
+    return db.prepare("SELECT * FROM registros WHERE ip = ? AND conectada = 1 ORDER BY fecha DESC, hora DESC LIMIT 1").get(ip) as RegistroInterface | undefined
   }
 
+  static getFirstRecordConectedByIp(ip: string): RegistroInterface | undefined{ {
+    return db.prepare("SELECT * FROM registros WHERE ip = ? AND conectada = 1 ORDER BY fecha DESC, hora ASC LIMIT 1").get(ip) as RegistroInterface | undefined }
+  }
+  
   static delete(id: number) {
     return db.prepare("DELETE FROM registros WHERE id = ?").run(id);
+  }
+
+  static countRecordsIp(ip: string): number {
+    const result = db.prepare("SELECT COUNT(*) as count FROM registros WHERE ip = ?").get(ip) as { count: number } | undefined;
+    if (!result) {
+      return 0;
+    }
+    return result.count;
+  }
+
+  static countRecordsIpConected(ip: string): number {
+    const result = db.prepare("SELECT COUNT(*) as count FROM registros WHERE ip = ? AND conectada='1'").get(ip) as { count: number } | undefined;
+    if (!result) {
+      return 0;
+    }
+    return result.count;
+  }
+
+  static countRecordsIpDisconected(ip: string): number {
+    const result = db.prepare("SELECT COUNT(*) as count FROM registros WHERE ip = ? AND conectada='0'").get(ip) as { count: number } | undefined;
+    if (!result) {
+      return 0;
+    }
+    return result.count;
+  }
+
+
+  static getDisponibilityByIp(ip: string): number {
+    const totalRecords = this.countRecordsIp(ip);
+    if (totalRecords === 0) {
+      return 0; // Evitar división por cero
+    }
+    const connectedRecords = this.countRecordsIpConected(ip);
+    return (connectedRecords / totalRecords) * 100;
   }
 
 }

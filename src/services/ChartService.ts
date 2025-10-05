@@ -19,9 +19,7 @@ export class ChartService {
       let registros = RegistroService.findByIp(ip);
   
       for (let i = registros.length-1; i >= 1; i--) {
-
-
-      
+     
         if (registros[i].numSerie == registros[i-1].numSerie ) {
           registros[i].contador= registros[i].contador - registros[i-1].contador;
           if (registros[i].contador < 0) {
@@ -42,7 +40,6 @@ export class ChartService {
           contador: registro.contador
         });
       });
-
 
 
       // Convertir Map a array de objetos
@@ -67,8 +64,6 @@ export class ChartService {
       return datasets;
 
     }
-
-
 
 
     return [];
