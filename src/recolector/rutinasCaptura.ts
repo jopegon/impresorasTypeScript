@@ -1,17 +1,15 @@
 import { Impresora } from "../clases/Impresora";
-import { InterfaceIp } from "../models/IpModel";
 import { RegistroInterface } from "../models/RegistroModel";
 import { ConsultaImpresora } from "../services/ConsultaImpresora";
 import { IpService } from "../services/IpService";
 import { RegistroService } from "../services/RegistroService";
 
 
-
 const consultaIP = async (ip: string) => {
 
-  const captura = new ConsultaImpresora(new Impresora(ip, ''));
-  const printer = await captura.obtenerDatosImpresora();
-  return printerToInterfaceRegistro(printer);
+    const captura = new ConsultaImpresora(new Impresora(ip, ''));
+    const printer = await captura.obtenerDatosImpresora();
+    return printerToInterfaceRegistro(printer);
 
 }
 
@@ -21,6 +19,8 @@ const registraTodasIpsConectadas = () => {
     listaImpresorasVacias = IpService.findAllPrinters() ?? [];
     listaImpresorasVacias.forEach((impresoraVacia) => {
         let captura = new ConsultaImpresora(impresoraVacia);
+        captura.setTimeout(5000);
+        captura.setRetries(3);
         //listaPromesas.push(captura.obtenerDatos()); 
         captura.obtenerDatosImpresora().then((printer: Impresora) => {
             let resultado = printerToInterfaceRegistro(printer);
@@ -40,6 +40,8 @@ const registraTodasIps = () => {
     listaImpresorasVacias = IpService.findAllPrinters() ?? [];
     listaImpresorasVacias.forEach((impresoraVacia) => {
         let captura = new ConsultaImpresora(impresoraVacia);
+        captura.setTimeout(5000);
+        captura.setRetries(3);
         //listaPromesas.push(captura.obtenerDatos()); 
         captura.obtenerDatosImpresora().then((printer: Impresora) => {
             let resultado = printerToInterfaceRegistro(printer);

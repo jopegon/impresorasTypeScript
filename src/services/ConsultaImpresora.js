@@ -24,12 +24,20 @@ export class ConsultaImpresora {
   }
 
   setTimeout(timeout) {
-    this.timeout=timeout;
+    this.clientOptions.timeout = timeout;
   }
 
   getTimeout() {
-    return this.timeout;
+    return this.clientOptions.timeout;
   }
+
+  setRetries(retries) {
+    this.clientOptions.retries = retries;
+  }
+
+  getRetries() {
+    return this.clientOptions.retries;
+  } 
 
   saluda() {
     console.log(`hola soy impresora ${this.impresora.getIp()}`);

@@ -13,8 +13,6 @@ export class Recolector {
     }
 
 
-
-
     public recolecta() {
         try {
             this.inicioDia();

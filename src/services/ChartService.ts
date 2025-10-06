@@ -17,14 +17,26 @@ export class ChartService {
 
       // Los registros ya estan ordenados por fecha descendente
       let registros = RegistroService.findByIp(ip);
-  
+
+      let contadorAnterior:number=0;
+      registros.forEach(registro => {
+        
+        if (registro.contador == 0) {
+          registro.contador=contadorAnterior;
+        }
+        contadorAnterior=registro.contador;
+      });
+
       for (let i = registros.length-1; i >= 1; i--) {
-     
-        if (registros[i].numSerie == registros[i-1].numSerie ) {
+        
+        // Si el número de serie es el mismo, tengo la misma impresora sino no puedo comparar
+        // Si la impresora anterior estaba desconectada, no tengo número de serie, pero puedo asumir que es la misma impresora
+        if ((registros[i].numSerie === registros[i-1].numSerie ) || (registros[i].numSerie.length>0  && registros[i-1].conectada==false) ) {
           registros[i].contador= registros[i].contador - registros[i-1].contador;
           if (registros[i].contador < 0) {
             registros[i].contador=0;
           }
+        
         }
         else {
           registros[i].contador=0;
