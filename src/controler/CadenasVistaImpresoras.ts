@@ -1,5 +1,7 @@
+import { puerto } from "..";
 import { Impresora } from "../clases/Impresora";
 import { getLocalIP } from "../server/server";
+
 
 export class CadenasVistaImpresoras {
 
@@ -88,7 +90,7 @@ export class CadenasVistaImpresoras {
       <a class="text-center" href="http://${impresora.getIp()}" target="_blank">${impresora.getIp()}</a>
       <p class="text-center m-2">Sin conexión</p>
       <p class="text-center">${impresora.getLocalizacion()}</p>
-      <a class="text-center" href="http://192.168.1.134:3000/chart/chartIp/${impresora.getIp()}" target="_blank">grafico</a>
+      <a class="text-center" href="http://${getLocalIP()}:${puerto}/chart/chartIp/${impresora.getIp()}" target="_blank">grafico</a>
     </div>
     `;
   }
@@ -102,7 +104,7 @@ export class CadenasVistaImpresoras {
       <div class="${this.claseDivImpresoraIndividual} ${this.getFondo(impresora)} impresoraColor${impresora.getColor()}">
         <img class="mt-2" src="/img/${impresora.getModelo()}.png" alt="${impresora.getModelo()}" width="150" height="150"/>
         <a class="text-center" href="http://${impresora.getIp()}" target="_blank">${impresora.getIp()}</a>
-        <a class="text-center" href="http://192.168.1.134:3000/chart/chartIp/${impresora.getIp()}" target="_blank">grafico}</a>
+        <a class="text-center" href="http://${getLocalIP()}:${puerto}/chart/chartIp/${impresora.getIp()}" target="_blank">grafico}</a>
         <p class="text-center IdentificadorModelo">${impresora.getModelo()}</p>
         <p class="text-center">${impresora.getLocalizacion()}</p>
         <p class="text-center">Número de serie: ${impresora.getNumeroDeSerie()}</p>
@@ -171,7 +173,7 @@ getEncabezado():string{
           <option value="impresoraColorfalse">B/N</option>
       </select>
 
-      <a  target="_blank" href="http://${getLocalIP()}:3000/records/help">__</a>
+      <a  target="_blank" href="http://${getLocalIP()}:${puerto}/records/help">__</a>
        <p class="m-2" id="elementosListados"></p>
 
        
