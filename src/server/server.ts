@@ -83,6 +83,7 @@ export class Server {
         console.log(__dirname)
         this.app.use("/bootstrapCss", express.static(path.join(process.cwd(), "./node_modules/bootstrap/dist/css/")));
         this.app.use("/bootStrapJs", express.static(path.join(process.cwd(), "./node_modules/bootstrap/dist/js/")));
+        this.app.use("/bootStrapIcons", express.static(path.join(process.cwd(), "./node_modules/bootstrap-icons/font/")));
 
         this.app.use("/chartJs", express.static(path.join(process.cwd(), "./node_modules/chart.js/dist")));
         this.app.use("/chartJsAdapter", express.static(path.join(process.cwd(), "./node_modules/chartjs-adapter-date-fns/dist")));

@@ -5,7 +5,8 @@ import { RegistroService } from "./RegistroService";
 export class ChartService {
 
 
-  static getDataForIPChart(ip: string) {
+  static getDataForIPChart(ip: string, numRegistros:number) {
+    //const nunRegistros:number=15;
 
     const datosPorIP = new Map<string, Array<{ fecha: string, contador: number }>>();
 
@@ -16,9 +17,14 @@ export class ChartService {
       datosPorIP.set(ip, []);
 
       // Los registros ya estan ordenados por fecha descendente
-      let registros = RegistroService.findByIp(ip);
+      let registros = RegistroService.findByIp(ip, numRegistros);
 
       let contadorAnterior:number=0;
+
+      if (!registros) {
+        return [];
+      }
+      
       registros.forEach(registro => {
         
         if (registro.contador == 0) {
@@ -128,4 +134,6 @@ export class ChartService {
 
     return datasets;
   }
+
+  
 }

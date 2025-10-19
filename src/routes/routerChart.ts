@@ -7,7 +7,7 @@ const routerChart = Router();
 
 
 routerChart.get('/', ControlerChart.showChart);
-routerChart.get('/chartIp/:ip',ControlerChart.showchartIp);
+routerChart.get('/chartIp/:ip/:numRegistros',ControlerChart.showchartIp);
 
 
 export default routerChart;

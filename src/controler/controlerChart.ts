@@ -27,6 +27,7 @@ export class ControlerChart {
   static showchartIp (req: Request, res: Response) {
     try {
       const ip = req.params.ip;
+      const numRegistros = parseInt(req.params.numRegistros, 10);
 
       const ipData = IpService.findByIp(ip);
       
@@ -34,7 +35,7 @@ export class ControlerChart {
 
       //constPrinter = IpService.getPrintersByIp(ip);
 
-      const datasets = ChartService.getDataForIPChart(ip);
+      const datasets = ChartService.getDataForIPChart(ip, numRegistros);
 
       let impresionesTotales:number=0;
       let numeroRegistros:number=0;
@@ -54,7 +55,7 @@ export class ControlerChart {
       //console.log('Es array?', Array.isArray(datasets));
       
       res.render('chart', {
-        title: `Datos a fecha ${lastRecord?.fecha } ${lastRecord?.hora}`,
+        title: `Datos hasta ${lastRecord?.fecha } ${lastRecord?.hora}`,
         ipData: ipData,
         lastRecord: lastRecord,
         disponibility: disponibility,

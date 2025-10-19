@@ -7,39 +7,39 @@ export class CadenasVistaImpresoras {
 
   claseDivImpresoraIndividual!: string;
 
-  constructor(){
-    this.claseDivImpresoraIndividual= "d-flex flex-column align-items-center justify-content-center m-3 card";
+  constructor() {
+    this.claseDivImpresoraIndividual = "d-flex flex-column align-items-center justify-content-center m-3 card";
   }
-  
-  getFondo(impresora:Impresora):string{
-    
-    let cadena:string="";
 
- 
-    if (impresora.getNegro()<= 10){
-      cadena= 'fondoRojo'
+  getFondo(impresora: Impresora): string {
+
+    let cadena: string = "";
+
+
+    if (impresora.getNegro() <= 10) {
+      cadena = 'fondoRojo'
     }
-    else{
-      cadena='fondoBlanco'
+    else {
+      cadena = 'fondoBlanco'
     }
-    if (!impresora.getConectada()){
-      cadena='fondoGris'
+    if (!impresora.getConectada()) {
+      cadena = 'fondoGris'
     }
-    
+
     // Necesario porque sino los indicador colores son 0 en bn, no funciona correctamente
-    if(impresora.getColor()){
-      if (impresora.getMagenta()<= 10 || impresora.getCyan()<= 10 || impresora.getAmarillo()<= 10){
-        cadena= 'fondoRojo'
+    if (impresora.getColor()) {
+      if (impresora.getMagenta() <= 10 || impresora.getCyan() <= 10 || impresora.getAmarillo() <= 10) {
+        cadena = 'fondoRojo'
       }
     }
     return cadena;
   }
 
 
-  getBarrasPorcentajeColor(impresora:Impresora):string{
-    let cadena:string='';
-    if (impresora.getColor()){
-      cadena=`
+  getBarrasPorcentajeColor(impresora: Impresora): string {
+    let cadena: string = '';
+    if (impresora.getColor()) {
+      cadena = `
     
       <div title="Magenta ${impresora.getMagenta()} %" class="progress m-2 text-center" style="width: 70px; position: relative">
         <div  class="progress-bar overflow-visible" style="width: ${impresora.getMagenta()}%; z-index: 1; background-color: red"></div>
@@ -63,15 +63,15 @@ export class CadenasVistaImpresoras {
         </p>
       </div>`;
     }
-   
+
     return cadena;
   }
 
 
-  getBarraPorcentajeNegro(impresora:Impresora):string{
-    let cadena:string="";
+  getBarraPorcentajeNegro(impresora: Impresora): string {
+    let cadena: string = "";
 
-    cadena= `
+    cadena = `
     <div title="Negro ${impresora.getNegro()} %" class="progress m-2 text-center" style="width: 70px; position: relative">
       <div  class="progress-bar overflow-visible" style="width: ${impresora.getNegro()}%; z-index: 1; background-color: black"></div>
         <p class="position-absolute top-50 start-50 translate-middle text-primary" style="z-index: 2">
@@ -84,23 +84,24 @@ export class CadenasVistaImpresoras {
   }
 
 
-  getImpresoraNoConecta(impresora:Impresora):string{
+  getImpresoraNoConecta(impresora: Impresora): string {
     return `
     <div class="${this.claseDivImpresoraIndividual} ${this.getFondo(impresora)}">
       <a class="text-center" href="http://${impresora.getIp()}" target="_blank">${impresora.getIp()}</a>
       <p class="text-center m-2">Sin conexión</p>
       <p class="text-center">${impresora.getLocalizacion()}</p>
-      <a class="text-center" href="http://${getLocalIP()}:${puerto}/chart/chartIp/${impresora.getIp()}" target="_blank">grafico</a>
+      <a class="text-center" href="http://${getLocalIP()}:${puerto}/chart/chartIp/${impresora.getIp()}/30" target="_blank"><i class="bi bi-graph-up"></i></a>
+      
     </div>
     `;
   }
 
-  getImpresora(impresora:Impresora):string{
+  getImpresora(impresora: Impresora): string {
 
-    let cadena:string;
- 
+    let cadena: string;
 
-      cadena=`
+
+    cadena = `
       <div class="${this.claseDivImpresoraIndividual} ${this.getFondo(impresora)} impresoraColor${impresora.getColor()}">
         <img class="mt-2" src="/img/${impresora.getModelo()}.png" alt="${impresora.getModelo()}" width="150" height="150"/>
         <a class="text-center" href="http://${impresora.getIp()}" target="_blank">${impresora.getIp()}</a>
@@ -116,22 +117,23 @@ export class CadenasVistaImpresoras {
         </div>
       </div>
       `;
-   
+
 
     return cadena;
   }
 
- 
-getEncabezado():string{
-  return `<!DOCTYPE html>
+
+  getEncabezado(): string {
+    return `<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <title>Nivel tóner</title>   
 
     <link rel="stylesheet" href="/bootstrapCss/bootstrap.min.css" />
-    <!-- <link rel="stylesheet" href="/bootstrap/bootstrap.min.css" />-->
-    <!-- <script src="/js/bootstrap.js"></script> -->
+
+    <link rel="stylesheet" href="/bootStrapIcons/bootstrap-icons.css" />
+
     <script src="/bootStrapJs/bootstrap.js"></script> 
     
     <link rel="stylesheet" href="/css/vistaImpresoras.css" />
@@ -139,7 +141,7 @@ getEncabezado():string{
   </head>
 
   <body>
-    <div class="d-flex flex-wrap d-none sticky-top fondoGris" id="panelSelectores">
+    <div class="d-flex flex-wrap d-none sticky-top fondoGris justify-content-center" id="panelSelectores">
       <p class="m-2"> Localización </p>
       <select id="selectorIp" class="m-2">
           <option value=""></option>
@@ -183,11 +185,11 @@ getEncabezado():string{
 
     <div class="d-flex flex-wrap bd-highlight p-1 justify-content-center">
     ` ;
-}
+  }
 
 
-getFinal():string{
-  return `    
+  getFinal(): string {
+    return `    
 
     </div>
 
@@ -195,7 +197,7 @@ getFinal():string{
   </body>
 </html>
 `;
-}
+  }
 
 }
 
