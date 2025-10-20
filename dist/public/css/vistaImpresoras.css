@@ -1,0 +1,33 @@
+
+body {
+  background-color: rgb(236, 237, 238);
+}
+
+img {
+  margin-bottom: 20px;
+}
+p {
+  color: black;
+}
+
+.fondoRojo {
+  background-color: rgb(226, 95, 95);
+}
+
+.fondoGris {
+  background-color: rgb(236, 237, 238);
+}
+
+.fondoBlanco {
+  background-color: rgb(255, 255, 255);
+}
+
+.textoNegro {
+  color: black;
+}
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 30px;
+  width: 370px;
+  height: 400px;
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Monitorización impresiones.</title>
+
+  <style>
+    .divGrafico {
+      min-width: 850px;
+    }
+
+    .divContenedor {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="divContenedor">
+    <span>Número de días: </span>
+    <select name="nDias" id="nDias">
+      <option value="-28">28</option>
+      <option value="-21">21</option>
+      <option value="-14">14</option>
+      <option value="-7" selected>7</option>
+    </select>
+  </div>
+
+  <div class="divContenedor">
+
+    <div class="divGrafico">
+      <canvas id="line-chart1" width="400" height="225"></canvas>
+    </div>
+
+    <div class="divGrafico">
+      <canvas id="line-chart2" width="400" height="225"></canvas>
+    </div>
+
+    <div class="divGrafico">
+      <canvas id="line-chart3" width="400" height="225"></canvas>
+    </div>
+
+    <div class="divGrafico">
+      <canvas id="line-chart4" width="400" height="225"></canvas>
+    </div>
+
+  </div>
+</body>
+
+<!-- <script src="Chart.min.js"></script> -->
+
+<script type="text/javascript" src="/jss/chart.js"></script>
+
+<script type="text/javascript" src="/jss/libreria.js"></script>
+
+</html>

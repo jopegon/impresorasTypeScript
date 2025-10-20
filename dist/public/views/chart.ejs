@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/bootstrapCss/bootstrap.min.css" />
+
+
+    <!-- Chart.js -->
+    <script src="/chartJs/chart.umd.js"></script>
+    <script src="/chartJsAdapter/chartjs-adapter-date-fns.bundle.js"></script>
+
+    <style>
+        .chart-container {
+            position: relative;
+            height: 500px;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <div class="container my-4">
+        <h1 class="mb-4 text-center">
+            <%= title %>
+        </h1>
+
+        <!-- Información General -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card text-bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title">IP</h6>
+                        <p class="card-text fw-bold">
+                            <%= ipData.ip %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title">Ubicación</h6>
+                        <p class="card-text fw-bold">
+                            <%= ipData.localizacion %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title">Modelo</h6>
+                        <p class="card-text fw-bold">
+                            <%= lastRecord.modelo %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title">Nº Serie</h6>
+                        <p class="card-text fw-bold">
+                            <%= lastRecord.numSerie %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Métricas -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card text-center border-success">
+                    <div class="card-body">
+                        <h6 class="card-title">Contador impresora</h6>
+                        <p class="display-6 fw-bold text-success">
+                            <%= lastRecord.contador.toLocaleString("es-ES"); %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center border-primary" data-bs-toggle="tooltip"
+                    title="Media diaria impresiones realizadas en esa ip, aunque se hayan realizado en varias impresoras">
+                    <div class="card-body">
+                        <h6 class="card-title">Media Diaria impresiones en la ip</h6>
+                        <p class="display-6 fw-bold text-primary">
+                            <%= Number(impresionMedia).toLocaleString('es-ES', { minimumFractionDigits: 2,
+                                maximumFractionDigits: 2, useGrouping: true }); %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center border-warning" data-bs-toggle="tooltip"
+                    title="Porcentaje de días que se ha registrado actividad en esa ip respecto al total de días desde el primer registro">
+                    <div class="card-body">
+                        <h6 class="card-title">Disponibilidad en ip (%)</h6>
+                        <p class="display-6 fw-bold text-warning">
+                            <%= disponibility.toLocaleString('es-ES') %> %
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+    <div class="container py-4">
+
+        <!-- Gráfico consumo -->
+        <div class="row">
+            <div class="col">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-center mb-3">Impresiones diarias</h5>
+                        <div class="chart-container">
+                            <canvas id="chartImpresionesDiarias"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-4 text-center">
+        <label for="numDias">Número de días:</label>
+        <select class="mb-4 text-center" name="numDias" id="numDias">
+            <option value="30">30</option>
+            <option value="60">60</option>
+            <option value="90">90</option>
+            <option value="120">120</option>
+        </select>
+    </div>
+
+
+
+
+    <!-- Datos ocultos -->
+    <script id="chart-data-impresiones" type="application/json">
+            <%- datasetsJSON %>
+    </script>
+    <script>
+
+        const urlActual = window.location.href;
+        const match = urlActual.match(/\/(\d+)$/);
+
+        if (match) {
+            // match[1] contiene el número capturado (ej: "120")
+            const valorDesdeURL = match[1];
+
+            // 4. Obtener una referencia al elemento select
+            const selectElement = document.getElementById('numDias');
+
+            // 5. Establecer el valor del select para que coincida con el valor de la URL
+            // Esto automáticamente selecciona la opción correspondiente.
+            selectElement.value = valorDesdeURL;
+        }
+
+
+        const ip = "<%= ipData.ip %>";
+        // 1. Obtener una referencia al elemento select por su ID
+        const selectElement = document.getElementById('numDias');
+
+        // 2. Definir la base de la URL
+        const baseUrl = 'http://' + window.location.hostname + ':' + window.location.port + '/chart/chartIp/' + ip + '/';
+
+        // 3. Añadir el event listener para el evento 'change'
+        selectElement.addEventListener('change', function () {
+
+            const valorSeleccionado = this.value;
+
+            // Redirigir la ventana a la URL construida
+            window.location.href = baseUrl + valorSeleccionado;
+        });  
+    </script>
+    <!-- Script Chart.js -->
+    <script>
+
+        const dataElement = document.getElementById('chart-data-impresiones');
+        let datasets;
+
+        try {
+            datasets = JSON.parse(dataElement.textContent);
+        } catch (e) {
+            console.error('Error al parsear datasets:', e);
+            datasets = [];
+        }
+
+        if (!Array.isArray(datasets)) {
+            console.error('datasets no es un array:', datasets);
+            datasets = [];
+        }
+
+        const colors = [
+            'rgb(255, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(255, 206, 86)',
+            'rgb(75, 192, 192)',
+            'rgb(153, 102, 255)',
+            'rgb(255, 159, 64)',
+            'rgb(201, 203, 207)',
+            'rgb(83, 102, 255)'
+        ];
+
+        const chartDatasets = datasets.map((dataset, index) => ({
+            label: dataset.label,
+            data: dataset.data,
+            borderColor: colors[index % colors.length],
+            backgroundColor: colors[index % colors.length].replace('rgb', 'rgba').replace(')', ', 0.1)'),
+            borderWidth: 2,
+            fill: false,
+            tension: 0.4,
+            pointRadius: 2,
+            pointHoverRadius: 4
+        }));
+
+        const ctx = document.getElementById('chartImpresionesDiarias').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: chartDatasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function (context) {
+                                const fecha = new Date(context[0].parsed.x);
+                                return 'Fecha: ' + fecha.toLocaleDateString('es-ES', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                });
+                            },
+                            label: function (context) {
+                                return context.dataset.label + ': ' + context.parsed.y;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            displayFormats: {
+                                day: 'dd/MM/yyyy'
+                            },
+                            tooltipFormat: 'dd/MM/yyyy'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Fecha'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Contador'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+
+    <!-- Bootstrap JS , OJO  tiene que ir antes de 'Inicializa todos los tooltips'-->
+    <script src="/bootStrapJs/bootstrap.bundle.min.js"></script>
+
+
+    <script>
+        // Inicializa todos los tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+
+</body>
+
+</html>
