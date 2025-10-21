@@ -5,7 +5,7 @@ import { RegistroService } from "./RegistroService";
 export class ChartService {
 
 
-  static getDataForIPChart(ip: string, numRegistros:number) {
+  static getDataForIPChart(ip: string, numRegistros: number) {
     //const nunRegistros:number=15;
 
     const datosPorIP = new Map<string, Array<{ fecha: string, contador: number }>>();
@@ -19,40 +19,46 @@ export class ChartService {
       // Los registros ya estan ordenados por fecha descendente
       let registros = RegistroService.findByIp(ip, numRegistros);
 
-      let contadorAnterior:number=0;
+      let contadorAnterior: number = 0;
 
       if (!registros) {
         return [];
       }
-      
-      registros.forEach(registro => {
-        
-        if (registro.contador == 0) {
-          registro.contador=contadorAnterior;
-        }
-        contadorAnterior=registro.contador;
-      });
 
-      for (let i = registros.length-1; i >= 1; i--) {
-        
-        // Si el número de serie es el mismo, tengo la misma impresora sino no puedo comparar
-        // Si la impresora anterior estaba desconectada, no tengo número de serie, pero puedo asumir que es la misma impresora
-        if ((registros[i].numSerie === registros[i-1].numSerie ) || (registros[i].numSerie.length>0  && registros[i-1].conectada==false) ) {
-          registros[i].contador= registros[i].contador - registros[i-1].contador;
-          if (registros[i].contador < 0) {
-            registros[i].contador=0;
-          }
-        
+      // Invierto el orden para tenerlos de más antiguo a más reciente
+      registros = registros.reverse();
+
+
+      // Relleno los contadores 0 con el último contador conocido
+      //  tanto hacia adelante como hacia atrás
+      for (let i = 0; i < registros.length - 1; i++) {
+        if (registros[i].contador > 0 && registros[i + 1].contador === 0) {
+          registros[i + 1].contador = registros[i].contador;
         }
-        else {
-          registros[i].contador=0;
-        }        
       }
-      registros[0].contador=0 // Elimino el último registro que no tiene con qué comparar
-      
+      for (let i = registros.length - 1; i > 0; i--) {
+        if (registros[i].contador > 0 && registros[i - 1].contador === 0) {
+          registros[i - 1].contador = registros[i].contador;
+        }
+      }
+
+
+      // Calculo los contadores diarios a partir de los contadores acumulados
+      for (let i = registros.length - 1; i >= 1; i--) {
+
+        // No sería necesario comprobar que el anterior sea mayor que 0 por los fors anteriores
+        if (registros[i].contador > 0 && registros[i - 1].contador > 0) {
+
+          registros[i].contador = registros[i].contador - registros[i - 1].contador;
+          if (registros[i].contador < 0) {
+            registros[i].contador = 0;
+          }
+        }
+      }
+
+      registros.shift() // Elimino el primer registro que no tiene valor real
 
       registros.forEach((registro: RegistroInterface) => {
-        
         datosPorIP.get(ip)?.push({
           fecha: registro.fecha,
           contador: registro.contador
@@ -135,5 +141,5 @@ export class ChartService {
     return datasets;
   }
 
-  
+
 }

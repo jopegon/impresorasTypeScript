@@ -74,7 +74,8 @@ INSERT INTO registros (fecha, hora, ip, conectada, numSerie, modelo, contador, c
   }
 
   static findByIp(ip: string, numRegistros:number): RegistroInterface[] | undefined {
-    return db.prepare("SELECT * FROM registros WHERE ip = ? ORDER  BY fecha ASC LIMIT ?").all(ip, numRegistros) as RegistroInterface[] | RegistroInterface[]
+    numRegistros+=1;
+    return db.prepare("SELECT * FROM registros WHERE ip = ? ORDER  BY fecha DESC LIMIT ?").all(ip, numRegistros) as RegistroInterface[] | RegistroInterface[]
   }
 
   static getLastRecordConectedByIp(ip: string): RegistroInterface | undefined{
