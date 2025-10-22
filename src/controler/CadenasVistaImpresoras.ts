@@ -105,10 +105,11 @@ export class CadenasVistaImpresoras {
       <div class="${this.claseDivImpresoraIndividual} ${this.getFondo(impresora)} impresoraColor${impresora.getColor()}">
         <img class="mt-2" src="/img/${impresora.getModelo()}.png" alt="${impresora.getModelo()}" width="150" height="150"/>
         <a class="text-center" href="http://${impresora.getIp()}" target="_blank">${impresora.getIp()}</a>
-        <a class="text-center" href="http://${getLocalIP()}:${puerto}/chart/chartIp/${impresora.getIp()}" target="_blank">grafico}</a>
+        
         <p class="text-center IdentificadorModelo">${impresora.getModelo()}</p>
         <p class="text-center">${impresora.getLocalizacion()}</p>
         <p class="text-center">Número de serie: ${impresora.getNumeroDeSerie()}</p>
+        <a class="text-center" href="http://${getLocalIP()}:${puerto}/chart/chartIp/${impresora.getIp()}/30" target="_blank"><i class="bi bi-graph-up"></i></a>
         <div class="d-flex justify-content-center bg-highlight">
 
           ${this.getBarraPorcentajeNegro(impresora)}
