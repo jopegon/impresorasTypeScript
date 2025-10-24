@@ -6,7 +6,7 @@ import { ConstructorOperacionesOID } from '../clases/oids/operacionesOID/Constru
 
 export class ConsultaImpresora {
 
-  
+
   constructor(impresora) {
     this.clientOptions = {
       port: 161,
@@ -15,7 +15,7 @@ export class ConsultaImpresora {
       version: snmp.Version2,
       community: 'public'
     };
-    
+
     this.impresora = impresora;
     this.oidsIniciales = new OidIniciales();
     this.constructorDatosIniciales = new ConstructorOids();
@@ -37,7 +37,7 @@ export class ConsultaImpresora {
 
   getRetries() {
     return this.clientOptions.retries;
-  } 
+  }
 
   saluda() {
     console.log(`hola soy impresora ${this.impresora.getIp()}`);
@@ -91,10 +91,10 @@ export class ConsultaImpresora {
 
   async etapaNivelesNegro() {
 
- 
+
     try {
       const varbinds = await this.snmpGet(this.oidsIniciales.getOidsBN());
-      
+
       this.impresora.setNegro(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelNegro(), this.oidsIniciales.getOidFullCapacityNegro()));
 
     } catch (error) {
@@ -103,7 +103,15 @@ export class ConsultaImpresora {
 
   }
 
+  async etapaContador() {
 
+    try {
+      const varbinds = await this.snmpGet(this.oidsIniciales.getOidsContadorImpresiones());      
+      this.impresora.setContador(this.getVarbinds(varbinds, this.oidsIniciales.getOidContadorImpresiones())[0]);
+    } catch (error) {
+      // No se hace nada porque puede que la impresora esté desconectada
+    }
+  }
 
   async etapaNumeroDeSerie() {
     try {
@@ -115,7 +123,6 @@ export class ConsultaImpresora {
   }
 
 
-
   async etapaNivelesColor() {
 
     try {
@@ -123,14 +130,14 @@ export class ConsultaImpresora {
 
       this.impresora.setColor(true);
 
-      this.impresora.setCyan(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelCyan(), 
-                  this.oidsIniciales.getOidFullCapacityCyan()));
+      this.impresora.setCyan(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelCyan(),
+        this.oidsIniciales.getOidFullCapacityCyan()));
 
-      this.impresora.setAmarillo(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelAmarillo(), 
-                  this.oidsIniciales.getOidFullCapacityAmarillo()));
+      this.impresora.setAmarillo(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelAmarillo(),
+        this.oidsIniciales.getOidFullCapacityAmarillo()));
 
-      this.impresora.setMagenta(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelMagenta(), 
-                  this.oidsIniciales.getOidFullCapacityMagenta()));
+      this.impresora.setMagenta(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelMagenta(),
+        this.oidsIniciales.getOidFullCapacityMagenta()));
 
 
     } catch (error) {
@@ -143,9 +150,11 @@ export class ConsultaImpresora {
   *  Mejora realizada implantar en entorno real
   */
   async obtenerNivel(varbinds, oidActual, oidLleno) {
-    
+
     const actual = this.getVarbinds(varbinds, oidActual);
+    
     const lleno = this.getVarbinds(varbinds, oidLleno);
+
     return this.operaciones.getNivel(actual, lleno);
   }
 
@@ -159,7 +168,10 @@ export class ConsultaImpresora {
        una vez sabemos el modelo de impresora, podemos adaptar las siguientes etapas
        a las particularidades de cada modelo    
        */
+      
       await this.etapaObtenerModelo(); // Ejecuta la etapa de identificación
+
+      await this.etapaContador();
 
       await this.etapaNivelesNegro(); // Ejecuta la etapa de datos negro
 
@@ -167,7 +179,6 @@ export class ConsultaImpresora {
         hay que tratar de unir etapa datos negro y etapa dato numero de serie
         , sino lo he hecho anteriormete ver porque
       */
-
 
       await this.etapaNumeroDeSerie();
 

@@ -36,6 +36,7 @@ export class Recolector {
     */
     private cadaHora() {
         cron.schedule("0 1-23 * * *", () => {
+        //cron.schedule("* * * * *", () => {  //con esto se ejecuta cada minuto
             console.log(`Ejecuto rutina cadaHora a las ${new Date().toLocaleTimeString()}`);
             registraTodasIpsConectadas();
         });

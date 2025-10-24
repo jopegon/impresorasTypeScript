@@ -160,7 +160,7 @@ export class Impresora {
  
   toString(): string {
     let cadena:string;
-    cadena=`Modelo: ${this.modelo} IP: ${this.ip} Localización: ${this.localizacion} Observaciones: ${this.observaciones} Tinta Negra: ${this.getNegro()} %  Color: ${this.color} Conectada: ${this.conectada} `;
+    cadena=`Modelo: ${this.modelo} s/n ${this.numeroDeSerie} IP: ${this.ip} Localización: ${this.localizacion} Contador ${this.contador} Observaciones: ${this.observaciones} Tinta Negra: ${this.getNegro()} %  Color: ${this.color} Conectada: ${this.conectada} `;
     if (this.getColor()){
       cadena+= `Tinta Magenta: ${this.getMagenta()} Tinta Cyan: ${this.getCyan()} Tinta Amarilla: ${this.getAmarillo()}`;
     }

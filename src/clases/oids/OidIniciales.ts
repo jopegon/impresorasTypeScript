@@ -1,4 +1,4 @@
-export class OidIniciales {   
+export class OidIniciales {
 
     /*
     Esta clase contiene los OIDs iniciales para obtener la información básica de una impresora a través de SNMP.
@@ -10,6 +10,8 @@ export class OidIniciales {
     oidModelo: string = '1.3.6.1.2.1.25.3.2.1.3.1';
     oidLocalizacion: string = '1.3.6.1.2.1.1.6.0';
     oidNumeroDeSerie: string = '1.3.6.1.2.1.43.5.1.1.17.1';
+
+    oidContadorImpresiones: string = '1.3.6.1.2.1.43.10.2.1.4.1.1';
 
     oidTonerLevelNegro: string = '1.3.6.1.2.1.43.11.1.1.9.1.1';
     oidFullCapacityNegro: string = '1.3.6.1.2.1.43.11.1.1.8.1.1';
@@ -24,20 +26,23 @@ export class OidIniciales {
     oidFullCapacityAmarillo: string = '1.3.6.1.2.1.43.11.1.1.8.1.4';
 
 
-    getOidsNumeroDeSerie() {
-        return [this.oidNumeroDeSerie];
+    getOidsContadorImpresiones(): string[] {
+        return [this.oidContadorImpresiones];
     }
 
+    getOidContadorImpresiones(): string {
+        return this.oidContadorImpresiones;
+    }
 
-    getOidsModelo() {
+    getOidsModelo(): string[] {
         return [this.oidModelo];
     }
 
-    getOidsBN() {
+    getOidsBN(): string[] {
         return [this.oidTonerLevelNegro, this.oidFullCapacityNegro];
     }
 
-    getOidsColor() {
+    getOidsColor(): string[] {
         return [
             this.oidTonerLevelCyan,
             this.oidFullCapacityCyan,
@@ -48,7 +53,7 @@ export class OidIniciales {
         ];
     }
 
-    getOidFullCapacityAmarillo() {
+    getOidFullCapacityAmarillo():string {
         return this.oidFullCapacityAmarillo;
     }
 
@@ -56,11 +61,11 @@ export class OidIniciales {
         this.oidFullCapacityAmarillo = value;
     }
 
-    getOidModelo() {
+    getOidModelo():string {
         return this.oidModelo;
     }
 
-    getOidTonerLevelAmarillo() {
+    getOidTonerLevelAmarillo():string {
         return this.oidTonerLevelAmarillo;
     }
 
@@ -68,7 +73,7 @@ export class OidIniciales {
         this.oidTonerLevelAmarillo = value;
     }
 
-    getOidFullCapacityMagenta() {
+    getOidFullCapacityMagenta():string {
         return this.oidFullCapacityMagenta;
     }
 
@@ -76,7 +81,7 @@ export class OidIniciales {
         this.oidFullCapacityMagenta = value;
     }
 
-    getOidTonerLevelMagenta() {
+    getOidTonerLevelMagenta():string {
         return this.oidTonerLevelMagenta;
     }
 
@@ -84,7 +89,7 @@ export class OidIniciales {
         this.oidTonerLevelMagenta = value;
     }
 
-    getOidTonerLevelCyan() {
+    getOidTonerLevelCyan():string {
         return this.oidTonerLevelCyan;
     }
 
@@ -92,7 +97,7 @@ export class OidIniciales {
         this.oidTonerLevelCyan = value;
     }
 
-    getOidFullCapacityCyan() {
+    getOidFullCapacityCyan():string {
         return this.oidFullCapacityCyan;
     }
 
@@ -100,7 +105,7 @@ export class OidIniciales {
         this.oidFullCapacityCyan = value;
     }
 
-    getOidLocalizacion() {
+    getOidLocalizacion():string {
         return this.oidLocalizacion;
     }
 
@@ -108,7 +113,7 @@ export class OidIniciales {
         this.oidLocalizacion = value;
     }
 
-    getOidTonerLevelNegro() {
+    getOidTonerLevelNegro():string {
         return this.oidTonerLevelNegro;
     }
 
@@ -116,15 +121,19 @@ export class OidIniciales {
         this.oidTonerLevelNegro = value;
     }
 
-    getOidNumeroDeSerie() {
+    getOidNumeroDeSerie() : string{
         return this.oidNumeroDeSerie;
+    }
+
+    getOidsNumeroDeSerie(): string[]  {
+        return [this.oidNumeroDeSerie];
     }
 
     setOidNumeroDeSerie(oidNumeroDeSerie: string) {
         this.oidNumeroDeSerie = oidNumeroDeSerie;
     }
 
-    getOidFullCapacityNegro() {
+    getOidFullCapacityNegro():string {
         return this.oidFullCapacityNegro;
     }
 

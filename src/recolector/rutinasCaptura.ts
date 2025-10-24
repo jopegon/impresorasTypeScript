@@ -18,15 +18,14 @@ const registraTodasIpsConectadas = () => {
     let listaImpresorasVacias: Impresora[];
     listaImpresorasVacias = IpService.findAllPrinters() ?? [];
     listaImpresorasVacias.forEach((impresoraVacia) => {
-        let captura = new ConsultaImpresora(impresoraVacia);
+        let captura: ConsultaImpresora = new ConsultaImpresora(impresoraVacia);
         captura.setTimeout(5000);
         captura.setRetries(3);
         //listaPromesas.push(captura.obtenerDatos()); 
         captura.obtenerDatosImpresora().then((printer: Impresora) => {
+            
             let resultado = printerToInterfaceRegistro(printer);
-            //console.log(`Conectada=${resultado.conectada}  ${resultado.modelo}  ${resultado.negro}`);
 
-            //console.log(`${resultado.fecha}  y ${resultado.hora}`);
             if (resultado.conectada) {
                 RegistroService.insertUpdateRegistro(resultado);
             }

@@ -34,7 +34,7 @@ export class CapturaService {
     };
 
 
-    static printerToInterfaceRegistro = (printer: Impresora) => {
+    static printerToInterfaceRegistro (printer: Impresora): RegistroInterface  {
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // Ajusta la diferencia de zona horaria
         //resultado.fecha = now.toISOString().split("T")[0]; 

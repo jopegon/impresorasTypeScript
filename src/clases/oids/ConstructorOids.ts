@@ -6,6 +6,7 @@ import { OidsC405 } from "./OidsC405";
 import { Oids1606dn } from "./Oids1606dn";
 import { OidsC8800 } from "./OidsC8800";
 import { Oids28BW5e } from "./Oids28BW5e";
+import { OidsKyoceraTodas } from "./OidsKyoceraTodas";
 
 
 
@@ -23,6 +24,9 @@ export class ConstructorOids {
         ["Xerox VersaLink C405 DN Multifunction Printer", new OidsC405()],
         ["HP LaserJet Professional P1606dn", new Oids1606dn()],
         ["C8800", new OidsC8800()],
+        ["ECOSYS M3655idn", new OidsKyoceraTodas()],
+        ["ECOSYS MA5500ifx", new OidsKyoceraTodas()],
+        ["d-COPIA 6001MF", new OidsKyoceraTodas()],
         ["Generic 28BW-5e", new Oids28BW5e()],
     ]);
 
