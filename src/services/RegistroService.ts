@@ -15,15 +15,15 @@ export class RegistroService {
 
 
   static insertUpdateRegistro = (regImp: RegistroInterface) => {
-    
+
     // ➡️ 1. Preparar y sanitizar los valores
     //const conectada = regImp.conectada === true ? 1 : (regImp.conectada === false ? 0 : 0);
     const conectada = regImp.conectada === true ? 1 : 0;
-    const color =  regImp.color ===  true ? 1 : 0;
+    const color = regImp.color === true ? 1 : 0;
 
     // Los valores que esperamos como números pero podrían ser undefined o NaN, los convertimos a null
     const contador = typeof regImp.contador === 'number' ? regImp.contador : null;
-    
+
     const negro = typeof regImp.negro === 'number' ? regImp.negro : null;
     const cyan = typeof regImp.cyan === 'number' ? regImp.cyan : null;
     const amarillo = typeof regImp.amarillo === 'number' ? regImp.amarillo : null;
@@ -97,12 +97,14 @@ export class RegistroService {
   }
 
   static getLastRecordConectedByIp(ip: string): RegistroInterface | undefined {
-    return db.prepare("SELECT * FROM registros WHERE ip = ? AND conectada = 1 ORDER BY fecha DESC, hora DESC LIMIT 1").get(ip) as RegistroInterface | undefined
+    return db.prepare("SELECT * FROM registros WHERE ip = ? AND conectada = 1 ORDER BY fecha DESC, hora DESC LIMIT 1")
+      .get(ip) as RegistroInterface | undefined
   }
 
   static getFirstRecordConectedByIp(ip: string): RegistroInterface | undefined {
     {
-      return db.prepare("SELECT * FROM registros WHERE ip = ? AND conectada = 1 ORDER BY fecha DESC, hora ASC LIMIT 1").get(ip) as RegistroInterface | undefined
+      return db.prepare("SELECT * FROM registros WHERE ip = ? AND conectada = 1 ORDER BY fecha DESC, hora ASC LIMIT 1")
+        .get(ip) as RegistroInterface | undefined
     }
   }
 
@@ -110,37 +112,42 @@ export class RegistroService {
     return db.prepare("DELETE FROM registros WHERE id = ?").run(id);
   }
 
-  static countRecordsIp(ip: string): number {
-    const result = db.prepare("SELECT COUNT(*) as count FROM registros WHERE ip = ?").get(ip) as { count: number } | undefined;
+
+
+  static countRecordsRangeByIp(ip: string, range: number): number {
+    const result = db.prepare("SELECT COUNT(*) as count FROM " +
+      "(SELECT * FROM registros WHERE ip = ? ORDER BY id DESC LIMIT ?) AS ultimos_registros;")
+      .get(ip, range) as { count: number } | undefined; if (!result) {
+        return 0;
+      }
+    return result.count;
+  }
+
+
+
+
+  static countRecordsByIpConectedRange(ip: string, range: number, conected: number): number {
+    const result = db.prepare("SELECT COUNT(*) as count FROM ( " +
+      "SELECT * " +
+      "FROM registros " +
+      "WHERE ip = ? " +
+      "ORDER BY id DESC " +
+      "LIMIT ?" +
+      ") AS ultimos_registros WHERE conectada=?;").get(ip, range, conected) as { count: number } | undefined;
     if (!result) {
       return 0;
     }
     return result.count;
   }
 
-  static countRecordsIpConected(ip: string): number {
-    const result = db.prepare("SELECT COUNT(*) as count FROM registros WHERE ip = ? AND conectada='1'").get(ip) as { count: number } | undefined;
-    if (!result) {
-      return 0;
-    }
-    return result.count;
-  }
+  static getDisponibilityRangeByIp(ip: string, range: number): number {
 
-  static countRecordsIpDisconected(ip: string): number {
-    const result = db.prepare("SELECT COUNT(*) as count FROM registros WHERE ip = ? AND conectada='0'").get(ip) as { count: number } | undefined;
-    if (!result) {
-      return 0;
-    }
-    return result.count;
-  }
-
-
-  static getDisponibilityByIp(ip: string): number {
-    const totalRecords = this.countRecordsIp(ip);
+    const totalRecords = this.countRecordsRangeByIp(ip, range);
     if (totalRecords === 0) {
       return 0; // Evitar división por cero
     }
-    const connectedRecords = this.countRecordsIpConected(ip);
+    const connectedRecords = this.countRecordsByIpConectedRange(ip, range, 1);
+
     return (connectedRecords / totalRecords) * 100;
   }
 

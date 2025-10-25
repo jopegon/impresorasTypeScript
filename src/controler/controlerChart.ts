@@ -37,6 +37,10 @@ export class ControlerChart {
 
       const datasets = ChartService.getDataForIPChart(ip, numRegistros);
 
+
+      const datasetToner = ChartService.getDataPorcentajeForIPChart(ip, numRegistros);
+
+
       let impresionesTotales:number=0;
       let numeroRegistros:number=0;
       let impresionMedia:number=0;
@@ -49,8 +53,8 @@ export class ControlerChart {
       impresionMedia = impresionesTotales / numeroRegistros; 
 
 
-      const disponibility = RegistroService.getDisponibilityByIp(ip);
-      
+      //const disponibility = RegistroService.getDisponibilityByIp(ip);
+      const disponibility = RegistroService.getDisponibilityRangeByIp(ip,numRegistros);
       //console.log('Enviando datasets al template:', datasets[0].data);
       //console.log('Es array?', Array.isArray(datasets));
       
@@ -60,7 +64,8 @@ export class ControlerChart {
         lastRecord: lastRecord,
         disponibility: disponibility,
         impresionMedia: impresionMedia.toFixed(2),
-        datasetsJSON: JSON.stringify(datasets)  // Solo la versión stringificada
+        datasetsJSON: JSON.stringify(datasets),  // Solo la versión stringificada
+        datasetPorcentajeToner: JSON.stringify(datasetToner)
       });
     } catch (error) {
       console.error('Error al cargar datos del gráfico:', error);

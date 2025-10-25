@@ -78,9 +78,10 @@
         <!-- Métricas -->
         <div class="row g-4 mb-4">
             <div class="col-md-4">
-                <div class="card text-center border-success">
+                <div class="card text-center border-success" data-bs-toggle="tooltip" 
+                title="Contador de la impresora.">
                     <div class="card-body">
-                        <h6 class="card-title">Contador impresora</h6>
+                        <h6 class="card-title">Contador impresiones</h6>
                         <p class="display-6 fw-bold text-success">
                             <%= lastRecord.contador.toLocaleString("es-ES"); %>
                         </p>
@@ -89,7 +90,7 @@
             </div>
             <div class="col-md-4">
                 <div class="card text-center border-primary" data-bs-toggle="tooltip"
-                    title="Media diaria impresiones realizadas en esa ip, aunque se hayan realizado en varias impresoras">
+                    title="Media diaria impresiones.">
                     <div class="card-body">
                         <h6 class="card-title">Media Diaria impresiones en la ip</h6>
                         <p class="display-6 fw-bold text-primary">
@@ -101,7 +102,7 @@
             </div>
             <div class="col-md-4">
                 <div class="card text-center border-warning" data-bs-toggle="tooltip"
-                    title="Porcentaje de días que se ha registrado actividad en esa ip respecto al total de días desde el primer registro">
+                    title="Porcentaje de días de conectividad de la impresora.">
                     <div class="card-body">
                         <h6 class="card-title">Disponibilidad en ip (%)</h6>
                         <p class="display-6 fw-bold text-warning">
@@ -133,6 +134,21 @@
             </div>
         </div>
     </div>
+    <div class="container py-4" >
+                <!-- Gráfico consumo -->
+        <div class="row">
+            <div class="col">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-center mb-3">Porcentaje tóner diario</h5>
+                        <div class="chart-container">
+                            <canvas id="chartNivelToner"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="container py-4 text-center">
         <label for="numDias">Número de días:</label>
@@ -150,6 +166,12 @@
     <!-- Datos ocultos -->
     <script id="chart-data-impresiones" type="application/json">
             <%- datasetsJSON %>
+
+    </script>
+
+    <script id="chart-data-porcentajeToner" type="application/json">
+
+            <%- datasetPorcentajeToner %>
     </script>
     <script>
 
@@ -280,6 +302,103 @@
                         title: {
                             display: true,
                             text: 'Contador'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+<script>
+
+        const dataElementNivelToner = document.getElementById('chart-data-porcentajeToner');
+        let datasetsNivelToner;
+
+        try {
+           
+            datasetsNivelToner = JSON.parse(dataElementNivelToner.textContent);
+        } catch (e) {
+            console.error('Error al parsear datasets:', e);
+            datasets = [];
+        }
+
+        if (!Array.isArray(datasets)) {
+            console.error('datasets no es un array:', datasets);
+            datasets = [];
+        }
+
+        const colorsNivelToner = [
+            'rgb(0, 0, 0)',             //negro
+            'rgb(0, 255, 255)',         //cyan
+            'rgb(255, 0, 0)',         //rojo
+            'rgb(255, 255, 0)'          //amarillo
+        ];
+
+        const chartDatasetsNivelToner = datasetsNivelToner.map((dataset, index) => ({
+            label: dataset.label,
+            data: dataset.data,
+            borderColor: colorsNivelToner[index % colorsNivelToner.length],
+            backgroundColor: colors[index % colors.length].replace('rgb', 'rgba').replace(')', ', 0.1)'),
+            borderWidth: 2,
+            fill: false,
+            tension: 0.4,
+            pointRadius: 2,
+            pointHoverRadius: 4
+        }));
+
+        const ctxNivelToner = document.getElementById('chartNivelToner').getContext('2d');
+        new Chart(ctxNivelToner, {
+            type: 'line',
+            data: {
+                datasets: chartDatasetsNivelToner
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function (context) {
+                                const fecha = new Date(context[0].parsed.x);
+                                return 'Fecha: ' + fecha.toLocaleDateString('es-ES', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                });
+                            },
+                            label: function (context) {
+                                return context.dataset.label + ': ' + context.parsed.y;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            displayFormats: {
+                                day: 'dd/MM/yyyy'
+                            },
+                            tooltipFormat: 'dd/MM/yyyy'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Fecha'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Porcentaje %'
                         }
                     }
                 }

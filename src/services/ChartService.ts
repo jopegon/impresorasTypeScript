@@ -6,7 +6,6 @@ export class ChartService {
 
 
   static getDataForIPChart(ip: string, numRegistros: number) {
-    //const nunRegistros:number=15;
 
     const datosPorIP = new Map<string, Array<{ fecha: string, contador: number }>>();
 
@@ -18,8 +17,6 @@ export class ChartService {
 
       // Los registros ya estan ordenados por fecha descendente
       let registros = RegistroService.findByIp(ip, numRegistros);
-
-      let contadorAnterior: number = 0;
 
       if (!registros) {
         return [];
@@ -93,6 +90,80 @@ export class ChartService {
     return [];
 
   }
+
+
+  static getDataPorcentajeForIPChart(ip: string, numRegistros: number) {
+
+    const porcentajeTonerPorIP = new Map<string, Array<{ fecha: string, negro: number, rojo: number, cyan: number, amarillo: number }>>();
+
+    const ipData = IpService.findByIp(ip);
+
+    if (ipData) {
+      porcentajeTonerPorIP.set(ip, []);
+
+      // Los registros ya estan ordenados por fecha descendente
+      let registros = RegistroService.findByIp(ip, numRegistros);
+
+      if (!registros) {
+        return [];
+      }
+
+      // Invierto el orden para tenerlos de más antiguo a más reciente
+      registros = registros.reverse();
+
+      registros.shift();  // Para que tenga el mismo número de días que grafico de contador impresiones
+      
+      registros.forEach((registro: RegistroInterface) => {
+        porcentajeTonerPorIP.get(ip)?.push({
+          fecha: registro.fecha,
+          negro: registro.negro,
+          rojo: registro.rojo,
+          cyan: registro.cyan,
+          amarillo: registro.amarillo
+        });
+      });
+    }
+    // Convertir Map a array de objetos
+    const datasets: Array<{
+      label: string;
+      data: Array<{ x: string, y: number }>;
+    }> = [];
+
+
+    porcentajeTonerPorIP.forEach((datos, ip) => {
+      datasets.push({
+        label: `negro `,
+        data: datos.map(d => ({
+          x: d.fecha,
+          y: d.negro,
+        }))
+      });
+      datasets.push({
+        label: `cyan `,
+        data: datos.map(d => ({
+          x: d.fecha,
+          y: d.cyan,
+        }))
+      });
+      datasets.push({
+        label: `rojo `,
+        data: datos.map(d => ({
+          x: d.fecha,
+          y: d.rojo,
+        }))
+      });
+            datasets.push({
+        label: `amarillo`,
+        data: datos.map(d => ({
+          x: d.fecha,
+          y: d.amarillo,
+        }))
+      });
+    });
+
+    return datasets;
+  }
+
 
   // Método para obtener datos agrupados por IP para el gráfico
   static getDataForChart() {
