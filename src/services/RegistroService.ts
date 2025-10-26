@@ -128,11 +128,7 @@ export class RegistroService {
 
   static countRecordsByIpConectedRange(ip: string, range: number, conected: number): number {
     const result = db.prepare("SELECT COUNT(*) as count FROM ( " +
-      "SELECT * " +
-      "FROM registros " +
-      "WHERE ip = ? " +
-      "ORDER BY id DESC " +
-      "LIMIT ?" +
+      "SELECT * FROM registros WHERE ip = ? ORDER BY id DESC LIMIT ?" +
       ") AS ultimos_registros WHERE conectada=?;").get(ip, range, conected) as { count: number } | undefined;
     if (!result) {
       return 0;

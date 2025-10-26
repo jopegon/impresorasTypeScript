@@ -6,6 +6,7 @@ import path from "path";
 import routerRegistro from "../routes/routerApiRegistros";
 import os from "os";
 import routerChart from "../routes/routerChart";
+import favicon from 'serve-favicon';
 
 
 export const getLocalIP = (): string | undefined => {
@@ -74,13 +75,15 @@ export class Server {
     }
 
     private seteos() {
+
         this.app.use(express.static('public'))
 
         this.app.use('/img', express.static(path.join(process.cwd(), './dist/public/img')));
         this.app.use('/css', express.static(path.join(process.cwd(), './dist/public/css')));
         this.app.use('/jss', express.static(path.join(process.cwd(), './dist/public/js')));
 
-        console.log(__dirname)
+        console.log(__dirname);
+        
         this.app.use("/bootstrapCss", express.static(path.join(process.cwd(), "./node_modules/bootstrap/dist/css/")));
         this.app.use("/bootStrapJs", express.static(path.join(process.cwd(), "./node_modules/bootstrap/dist/js/")));
         this.app.use("/bootStrapIcons", express.static(path.join(process.cwd(), "./node_modules/bootstrap-icons/font/")));
@@ -88,11 +91,13 @@ export class Server {
         this.app.use("/chartJs", express.static(path.join(process.cwd(), "./node_modules/chart.js/dist")));
         this.app.use("/chartJsAdapter", express.static(path.join(process.cwd(), "./node_modules/chartjs-adapter-date-fns/dist")));
 
+        this.app.use(favicon(path.join(process.cwd(), './dist/public/img/favicon.ico')));
+
 
         // Printing current directory
         console.log("Current working directory: ", process.cwd());
 
-        this.app.set('views', path.join(process.cwd(), './dist/public//views'));
+        this.app.set('views', path.join(process.cwd(), './dist/public/views'));
 
         this.app.set('view engine', 'ejs');
     }

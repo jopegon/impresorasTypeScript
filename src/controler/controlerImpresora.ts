@@ -179,3 +179,11 @@ export const contador = async (request: Request, response: Response) => {
     //res.sendFile(path.join(__dirname, 'views/indexF.html'));
     response.render('contador', {});
 }
+
+
+export const contadores= async (request: Request, response: Response) => {
+
+    let numeroGraficos:number = 3;
+    //res.sendFile(path.join(__dirname, 'views/indexF.html'));
+    response.render('contadores', {numeroGraficos: numeroGraficos});
+}

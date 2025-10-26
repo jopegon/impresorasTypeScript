@@ -5,15 +5,22 @@ import { RegistroService } from "./RegistroService";
 export class ChartService {
 
 
-  static getDataForIPChart(ip: string, numRegistros: number) {
+  /**   * Devuelve datasets con el número de impresiones diarias para una ip dada,
+   * formatted for charting, using the most recent 'numRegistros' records.
+   * Each dataset contains date and impression count values.
+   */
+  static getDataForIPChart(ip: string, numRegistros: number): Array<{
+    label: string;
+    data: Array<{ x: string, y: number }>;
+  }> {
 
-    const datosPorIP = new Map<string, Array<{ fecha: string, contador: number }>>();
+    const datosPorIP = new Array<{ label: string, data: Array<{ x: string, y: number }> }>();
 
     const ipData = IpService.findByIp(ip);
 
     if (ipData) {
 
-      datosPorIP.set(ip, []);
+      //datosPorIP.push({ label: ip, data: [] });
 
       // Los registros ya estan ordenados por fecha descendente
       let registros = RegistroService.findByIp(ip, numRegistros);
@@ -55,51 +62,52 @@ export class ChartService {
 
       registros.shift() // Elimino el primer registro que no tiene valor real
 
+
+      datosPorIP.push({ label: ip, data: [] });
+
       registros.forEach((registro: RegistroInterface) => {
-        datosPorIP.get(ip)?.push({
-          fecha: registro.fecha,
-          contador: registro.contador
+
+        datosPorIP[0].data.push({
+          x: registro.fecha,
+          y: registro.contador
         });
       });
 
-
-      // Convertir Map a array de objetos
-      const datasets: Array<{
-        label: string;
-        data: Array<{ x: string, y: number }>;
-      }> = [];
-
-      datosPorIP.forEach((datos, ip) => {
-        datasets.push({
-          label: `${ip} - ${ipData.localizacion}`,
-          data: datos.map(d => ({
-            x: d.fecha,
-            y: d.contador
-          }))
-        });
-      });
-
-      //console.log('Datasets generados:', datasets.length);
       //console.log('Estructura:', JSON.stringify(datasets[0]));
 
-      return datasets;
+      return datosPorIP;
 
     }
-
-
-    return [];
-
+    else {
+      return [];
+    }
   }
 
 
-  static getDataPorcentajeForIPChart(ip: string, numRegistros: number) {
+  /**
+   * Devuelve datasets con el porcentaje de tóner (black, cyan, magenta, yellow) para una ip dada,
+   * formatted for charting, using the most recent 'numRegistros' records.
+   * Each dataset contains date and toner percentage values.
+   */
+  static getDataPorcentajeForIPChart(ip: string, numRegistros: number): Array<{
+    label: string;
+    data: Array<{ x: string, y: number }>;
+  }> {
 
-    const porcentajeTonerPorIP = new Map<string, Array<{ fecha: string, negro: number, rojo: number, cyan: number, amarillo: number }>>();
+    const porcentajeTonerPorIP = new Array<{
+      label: string, data: Array<{
+        x: string,
+        y: number
+      }>
+    }>;
 
     const ipData = IpService.findByIp(ip);
 
     if (ipData) {
-      porcentajeTonerPorIP.set(ip, []);
+      porcentajeTonerPorIP.push({ label: 'negro', data: [] });
+      porcentajeTonerPorIP.push({ label: 'cyan', data: [] });
+      porcentajeTonerPorIP.push({ label: 'rojo', data: [] });
+      porcentajeTonerPorIP.push({ label: 'amarillo', data: [] });
 
       // Los registros ya estan ordenados por fecha descendente
       let registros = RegistroService.findByIp(ip, numRegistros);
@@ -112,56 +120,31 @@ export class ChartService {
       registros = registros.reverse();
 
       registros.shift();  // Para que tenga el mismo número de días que grafico de contador impresiones
-      
+
       registros.forEach((registro: RegistroInterface) => {
-        porcentajeTonerPorIP.get(ip)?.push({
-          fecha: registro.fecha,
-          negro: registro.negro,
-          rojo: registro.rojo,
-          cyan: registro.cyan,
-          amarillo: registro.amarillo
+        porcentajeTonerPorIP[0].data.push({
+          x: registro.fecha,
+          y: registro.negro
+        });
+        porcentajeTonerPorIP[1].data.push({
+          x: registro.fecha,
+          y: registro.cyan
+        });
+        porcentajeTonerPorIP[2].data.push({
+          x: registro.fecha,
+          y: registro.rojo
+        });
+        porcentajeTonerPorIP[3].data.push({
+          x: registro.fecha,
+          y: registro.amarillo
         });
       });
     }
-    // Convertir Map a array de objetos
-    const datasets: Array<{
-      label: string;
-      data: Array<{ x: string, y: number }>;
-    }> = [];
 
 
-    porcentajeTonerPorIP.forEach((datos, ip) => {
-      datasets.push({
-        label: `negro `,
-        data: datos.map(d => ({
-          x: d.fecha,
-          y: d.negro,
-        }))
-      });
-      datasets.push({
-        label: `cyan `,
-        data: datos.map(d => ({
-          x: d.fecha,
-          y: d.cyan,
-        }))
-      });
-      datasets.push({
-        label: `rojo `,
-        data: datos.map(d => ({
-          x: d.fecha,
-          y: d.rojo,
-        }))
-      });
-            datasets.push({
-        label: `amarillo`,
-        data: datos.map(d => ({
-          x: d.fecha,
-          y: d.amarillo,
-        }))
-      });
-    });
 
-    return datasets;
+
+    return porcentajeTonerPorIP;
   }
 
 

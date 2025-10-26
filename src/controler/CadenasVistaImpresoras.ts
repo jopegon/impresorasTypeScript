@@ -131,6 +131,8 @@ export class CadenasVistaImpresoras {
     <meta charset="UTF-8" />
     <title>Nivel tóner</title>   
 
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+
     <link rel="stylesheet" href="/bootstrapCss/bootstrap.min.css" />
 
     <link rel="stylesheet" href="/bootStrapIcons/bootstrap-icons.css" />

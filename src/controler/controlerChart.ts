@@ -13,7 +13,7 @@ export class ControlerChart {
       //console.log('Enviando datasets al template:', datasets);
       //console.log('Es array?', Array.isArray(datasets));
       
-      res.render('chart', {
+      res.render('contadores', {
         title: 'Gráfico de Contadores por IP',
         datasetsJSON: JSON.stringify(datasets)  // Solo la versión stringificada
       });

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/bootstrapCss/bootstrap.min.css" />
+
+    <!-- Chart.js -->
+    <script src="/chartJs/chart.umd.js"></script>
+    <script src="/chartJsAdapter/chartjs-adapter-date-fns.bundle.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            height: 500px;
+        }   
+    </style>
+</head>
+
+<body>
+
+    <% for (let i=0; i < numeroGraficos; i++) { %>
+        <div class="container py-4">
+            <!-- Gráfico consumo -->
+            <div class="row">
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-center mb-3">Impresiones diarias.</h5>
+                            <div class="chart-container">
+                                <canvas id="chartNivelToner<%=i%>"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
+
+
+    <!-- Bootstrap JS , OJO  tiene que ir antes de 'Inicializa todos los tooltips'-->
+    <script src="/bootStrapJs/bootstrap.bundle.min.js"></script>
+
+
+    <script>
+        // Inicializa todos los tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+</body>
+
+</html>
