@@ -20,29 +20,60 @@ const colorsNivelToner = [
 
 
 
-const generaChart = (chartData, arrayColores, canvasName, leyendaX, leyendaY) => {
 
-    const dataElement = document.getElementById(chartData);
+
+/**
+ * Crea un gráfico de línea (Chart.js) a partir de datos obtenidos del DOM o de un array.
+ * @param {string | Object[]} chartDataOrId - El ID del elemento DOM que contiene los datos (como string JSON) O el array de datasets.
+ * @param {string[]} arrayColores - Array de colores RGB para las líneas.
+ * @param {string} canvasName - El ID del elemento canvas donde se dibujará el gráfico.
+ * @param {string} leyendaX - Título del eje X.
+ * @param {string} leyendaY - Título del eje Y.
+ * @returns {Chart} El objeto Chart.js creado.
+ */
+const crearChart = (chartDataOrId, arrayColores, canvasName, leyendaX, leyendaY) => {
+
     let datasets;
 
-    try {
+    // 1. Lógica unificada para OBTENER los datasets
+    if (typeof chartDataOrId === 'string') {
+        // Caso 'generaChart': Se pasó un ID del DOM
+        const dataElement = document.getElementById(chartDataOrId);
         
-        // obtiene el contenido de texto de ese elemento y de todos sus descendientes
-        datasets = JSON.parse(dataElement.textContent);
-    } catch (e) {
-        console.error('Error al parsear datasets:', e);
+        try {
+            // Intenta parsear el contenido de texto del elemento
+            datasets = dataElement ? JSON.parse(dataElement.textContent) : [];
+        } catch (e) {
+            console.error('Error al parsear datasets del DOM:', e);
+            datasets = [];
+        }
+    } else if (Array.isArray(chartDataOrId)) {
+        // Caso 'generaSubChart': Se pasó directamente el array de datasets
+        datasets = chartDataOrId;
+    } else {
+        console.error('El primer argumento debe ser un ID de elemento (string) o un array de datos.', chartDataOrId);
         datasets = [];
     }
 
+    // 2. Validación de que 'datasets' es un array
     if (!Array.isArray(datasets)) {
-        console.error('datasets no es un array:', datasets);
+        console.error('Los datasets finales no son un array:', datasets);
         datasets = [];
     }
+    
+    // Si no hay datasets, se puede salir o generar un gráfico vacío (elegimos salir para evitar errores)
+    if (datasets.length === 0) {
+        // Retorna null si no hay datos válidos y no se dibuja el gráfico.
+        return null; 
+    }
 
+    // 3. Lógica compartida para TRANSFORMAR y CONFIGURAR los datasets
     const chartDatasets = datasets.map((dataset, index) => ({
         label: dataset.label,
         data: dataset.data,
+        // Aplica el color de forma modular
         borderColor: arrayColores[index % arrayColores.length],
+        // Genera el color de fondo semi-transparente
         backgroundColor: arrayColores[index % arrayColores.length].replace('rgb', 'rgba').replace(')', ', 0.1)'),
         borderWidth: 2,
         fill: false,
@@ -51,8 +82,9 @@ const generaChart = (chartData, arrayColores, canvasName, leyendaX, leyendaY) =>
         pointHoverRadius: 4
     }));
 
-
+    // 4. Lógica compartida para CREAR y DEVOLVER el Chart
     const ctx = document.getElementById(canvasName).getContext('2d');
+    
     return new Chart(ctx, {
         type: 'line',
         data: {
@@ -111,93 +143,4 @@ const generaChart = (chartData, arrayColores, canvasName, leyendaX, leyendaY) =>
             }
         }
     });
-
-
-
-}
-
-
-
-
-const generaSubChart = (chartData, arrayColores, canvasName, leyendaX, leyendaY) => {
-
-
-    let datasets=chartData;
-    //console.log('canvasName:',canvasName);
-
-    const chartDatasets = datasets.map((dataset, index) => ({
-        label: dataset.label,
-        data: dataset.data,
-        borderColor: arrayColores[index % arrayColores.length],
-        backgroundColor: arrayColores[index % arrayColores.length].replace('rgb', 'rgba').replace(')', ', 0.1)'),
-        borderWidth: 2,
-        fill: false,
-        tension: 0.4,
-        pointRadius: 2,
-        pointHoverRadius: 4
-    }));
-
-
-    const ctx = document.getElementById(canvasName).getContext('2d');
-    return new Chart(ctx, {
-        type: 'line',
-        data: {
-            datasets: chartDatasets
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                },
-                tooltip: {
-                    callbacks: {
-                        title: function (context) {
-                            const fecha = new Date(context[0].parsed.x);
-                            return 'Fecha: ' + fecha.toLocaleDateString('es-ES', {
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric'
-                            });
-                        },
-                        label: function (context) {
-                            return context.dataset.label + ': ' + context.parsed.y;
-                        }
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'day',
-                        displayFormats: {
-                            day: 'dd/MM/yyyy'
-                        },
-                        tooltipFormat: 'dd/MM/yyyy'
-                    },
-                    title: {
-                        display: true,
-                        text: leyendaX
-                    }
-                },
-                y: {
-                    beginAtZero: false,
-                    title: {
-                        display: true,
-                        text: leyendaY
-                    }
-                }
-            }
-        }
-    });
-
-
-
-}
+};

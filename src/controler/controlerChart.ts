@@ -1,8 +1,9 @@
 
 import { Request, Response } from 'express';
 import { ChartService } from '../services/ChartService';
-import { IpService } from '../services/IpService';
-import { RegistroService } from '../services/RegistroService';
+import { IpModel } from '../models/IpModel';
+import { RegistroModel } from '../models/RegistroService';
+
 
 
 export class ControlerChart {
@@ -40,9 +41,9 @@ export class ControlerChart {
 
       const numRegistros:number = parseInt(nRegistros, 10);
 
-      const ipData = IpService.findByIp(ip);
+      const ipData = IpModel.findByIp(ip);
 
-      const lastRecord = RegistroService.getLastRecordConectedByIp(ip);
+      const lastRecord = RegistroModel.getLastRecordConectedByIp(ip);
 
       //constPrinter = IpService.getPrintersByIp(ip);
 
@@ -65,7 +66,7 @@ export class ControlerChart {
       impresionMedia = impresionesTotales / numeroRegistros;
 
       //const disponibility = RegistroService.getDisponibilityByIp(ip);
-      const disponibility = RegistroService.getDisponibilityRangeByIp(ip, numRegistros);
+      const disponibility = RegistroModel.getDisponibilityRangeByIp(ip, numRegistros);
       //console.log('Enviando datasets al template:', datasets[0].data);
       //console.log('Es array?', Array.isArray(datasets));
 

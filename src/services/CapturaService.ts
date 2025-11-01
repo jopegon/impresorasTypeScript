@@ -1,8 +1,9 @@
 import { Impresora } from "../clases/Impresora";
 import { ConsultaImpresora } from "./ConsultaImpresora";
-import { RegistroInterface } from "../models/RegistroModel";
-import { IpService } from "./IpService";
-import { RegistroService } from "./RegistroService";
+import { RegistroInterface } from "../models/RegistroInterface";
+import { IpModel } from "../models/IpModel";
+import { RegistroModel } from "../models/RegistroService";
+
 
 export class CapturaService {
     /*
@@ -12,7 +13,7 @@ export class CapturaService {
     */
     static registrarIps(grabarSoloConectadas: boolean) {
         let listaImpresoras: Impresora[];
-        listaImpresoras = IpService.findAllPrinters() ?? [];
+        listaImpresoras = IpModel.findAllPrinters() ?? [];
         listaImpresoras.forEach((impresora) => {
             let captura = new ConsultaImpresora(impresora);
             captura.setTimeout(2000)
@@ -25,7 +26,7 @@ export class CapturaService {
                 //console.log(`${resultado.fecha}  y ${resultado.hora}`);
                 if (grabarSoloConectadas) {
                     if (resultado.conectada) {
-                        RegistroService.insertUpdateRegistro(resultado);
+                        RegistroModel.insertUpdateRegistro(resultado);
                     }
                 }
 

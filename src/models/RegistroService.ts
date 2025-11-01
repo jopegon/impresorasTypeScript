@@ -1,9 +1,9 @@
 import db from "../config/db";
 
-import { RegistroInterface } from "../models/RegistroModel";
+import { RegistroInterface } from "../models/RegistroInterface";
 
 
-export class RegistroService {
+export class RegistroModel {
   static create(ip: string, localizacion: string, observaciones?: string) {
     const stmt = db.prepare(`
       INSERT INTO ips (ip, localizacion, observaciones)

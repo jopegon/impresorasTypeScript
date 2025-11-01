@@ -1,8 +1,8 @@
 import { Impresora } from "../clases/Impresora";
-import { RegistroInterface } from "../models/RegistroModel";
+import { IpModel } from "../models/IpModel";
+import { RegistroInterface } from "../models/RegistroInterface";
+import { RegistroModel } from "../models/RegistroService";
 import { ConsultaImpresora } from "../services/ConsultaImpresora";
-import { IpService } from "../services/IpService";
-import { RegistroService } from "../services/RegistroService";
 
 
 const consultaIP = async (ip: string) => {
@@ -16,7 +16,7 @@ const consultaIP = async (ip: string) => {
 
 const registraTodasIpsConectadas = () => {
     let listaImpresorasVacias: Impresora[];
-    listaImpresorasVacias = IpService.findAllPrinters() ?? [];
+    listaImpresorasVacias = IpModel.findAllPrinters() ?? [];
     listaImpresorasVacias.forEach((impresoraVacia) => {
         let captura: ConsultaImpresora = new ConsultaImpresora(impresoraVacia);
         captura.setTimeout(5000);
@@ -27,7 +27,7 @@ const registraTodasIpsConectadas = () => {
             let resultado = printerToInterfaceRegistro(printer);
 
             if (resultado.conectada) {
-                RegistroService.insertUpdateRegistro(resultado);
+                RegistroModel.insertUpdateRegistro(resultado);
             }
         });
     });
@@ -36,7 +36,7 @@ const registraTodasIpsConectadas = () => {
 
 const registraTodasIps = () => {
     let listaImpresorasVacias: Impresora[];
-    listaImpresorasVacias = IpService.findAllPrinters() ?? [];
+    listaImpresorasVacias = IpModel.findAllPrinters() ?? [];
     listaImpresorasVacias.forEach((impresoraVacia) => {
         let captura = new ConsultaImpresora(impresoraVacia);
         captura.setTimeout(5000);
@@ -45,7 +45,7 @@ const registraTodasIps = () => {
         captura.obtenerDatosImpresora().then((printer: Impresora) => {
             let resultado = printerToInterfaceRegistro(printer);
             //console.log(`Conectada=${resultado.conectada}  ${resultado.modelo}  ${resultado.negro}`);
-            RegistroService.insertUpdateRegistro(resultado);
+            RegistroModel.insertUpdateRegistro(resultado);
         });
     });
 };

@@ -1,7 +1,8 @@
-import { InterfaceIp } from "../models/IpModel";
-import { RegistroInterface } from "../models/RegistroModel";
-import { IpService } from "./IpService";
-import { RegistroService } from "./RegistroService";
+import { InterfaceIp } from "../models/IpInterface";
+import { IpModel } from "../models/IpModel";
+import { RegistroInterface } from "../models/RegistroInterface";
+import { RegistroModel } from "../models/RegistroService";
+
 
 export class ChartService {
 
@@ -17,16 +18,16 @@ export class ChartService {
 
     const datosPorIP = new Array<{ label: string, data: Array<{ x: string, y: number }> }>();
 
-    const ipData = IpService.findByIp(ip);
-   
-    let ipLabel=`${ip} ${ipData?.localizacion}`
+    const ipData = IpModel.findByIp(ip);
+
+    let ipLabel = `${ip} ${ipData?.localizacion}`
 
     if (ipData) {
 
       datosPorIP.push({ label: ipLabel, data: [] });
 
       // Los registros ya estan ordenados por fecha descendente
-      let registros = RegistroService.findByIp(ip, numRegistros);
+      let registros = RegistroModel.findByIp(ip, numRegistros);
 
       if (!registros) {
         return [];
@@ -56,8 +57,16 @@ export class ChartService {
         // No sería necesario comprobar que el anterior sea mayor que 0 por los fors anteriores
         if (registros[i].contador > 0 && registros[i - 1].contador > 0) {
 
-          registros[i].contador = registros[i].contador - registros[i - 1].contador;
-          if (registros[i].contador < 0) {
+          // Si el número de serie es el mismo, calculo la diferencia sino pongo a 0
+          if (registros[i].numSerie === registros[i - 1].numSerie) {
+            
+            registros[i].contador = registros[i].contador - registros[i - 1].contador;
+            
+            // Aseguro que no haya valores negativos
+            if (registros[i].contador < 0) {
+              registros[i].contador = 0;
+            }
+          } else {
             registros[i].contador = 0;
           }
         }
@@ -102,7 +111,7 @@ export class ChartService {
       }>
     }>;
 
-    const ipData = IpService.findByIp(ip);
+    const ipData = IpModel.findByIp(ip);
 
     if (ipData) {
       porcentajeTonerPorIP.push({ label: 'negro', data: [] });
@@ -111,7 +120,7 @@ export class ChartService {
       porcentajeTonerPorIP.push({ label: 'amarillo', data: [] });
 
       // Los registros ya estan ordenados por fecha descendente
-      let registros = RegistroService.findByIp(ip, numRegistros);
+      let registros = RegistroModel.findByIp(ip, numRegistros);
 
       if (!registros) {
         return [];
@@ -142,19 +151,16 @@ export class ChartService {
       });
     }
 
-
-
-
     return porcentajeTonerPorIP;
   }
 
 
   // Método para obtener datos agrupados por IP para el gráfico
-  static getDataForChart(numeroDeRegistros:number): Array<{label: string; data: Array<{ x: string, y: number }>}> {
-    const listaIps :InterfaceIp[] = IpService.findAllIPs();
+  static getDataForChart(numeroDeRegistros: number): Array<{ label: string; data: Array<{ x: string, y: number }> }> {
+    const listaIps: InterfaceIp[] = IpModel.findAllIPs();
 
     // Agrupar por IP
-    const datosPorIP = Array<{label: string; data: Array<{ x: string, y: number }>}> ();
+    const datosPorIP = Array<{ label: string; data: Array<{ x: string, y: number }> }>();
 
     listaIps.forEach((ip) => {
       datosPorIP.push(ChartService.getDataForIPChart(ip.ip, numeroDeRegistros)[0]);
