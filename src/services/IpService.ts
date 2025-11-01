@@ -15,9 +15,6 @@ export class IpService {
     return { id: result.lastInsertRowid as number, ip, localizacion, observaciones };
   }
 
-  static findAll(): InterfaceIp[] {
-    return db.prepare("SELECT * FROM ips").all() as InterfaceIp[];
-  }
 
   static findAllPrinters(): Impresora[] {
     let resultadoConsulta: InterfaceIp[] = [];

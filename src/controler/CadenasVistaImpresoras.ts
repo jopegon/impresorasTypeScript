@@ -179,9 +179,10 @@ export class CadenasVistaImpresoras {
       </select>
 
       <a  target="_blank" href="http://${getLocalIP()}:${puerto}/records/help">__</a>
-       <p class="m-2" id="elementosListados"></p>
+      
+      <p class="m-2" id="elementosListados"></p>
 
-       
+      <a class="m-2 text-center" href="http://${getLocalIP()}:${puerto}/chart/" target="_blank"><i class="bi bi-graph-up"></i></a>
 
 
     </div>

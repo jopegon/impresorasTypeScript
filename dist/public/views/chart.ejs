@@ -18,6 +18,8 @@
     <script src="/chartJs/chart.umd.js"></script>
     <script src="/chartJsAdapter/chartjs-adapter-date-fns.bundle.js"></script>
 
+    <script src="/jss/toolChart.js"></script>
+
     <style>
         .chart-container {
             position: relative;
@@ -39,7 +41,9 @@
                     <div class="card-body">
                         <h6 class="card-title">IP</h6>
                         <p class="card-text fw-bold">
-                            <a href="http://<%= ipData.ip %>" target="_blank"> <%= ipData.ip %> </a>
+                            <a href="http://<%= ipData.ip %>" target="_blank">
+                                <%= ipData.ip %>
+                            </a>
                         </p>
                     </div>
                 </div>
@@ -80,8 +84,7 @@
         <!-- Métricas -->
         <div class="row g-4 mb-4">
             <div class="col-md-4">
-                <div class="card text-center border-success" data-bs-toggle="tooltip" 
-                title="Contador de la impresora.">
+                <div class="card text-center border-success" data-bs-toggle="tooltip" title="Contador de la impresora.">
                     <div class="card-body">
                         <h6 class="card-title">Contador impresiones</h6>
                         <p class="display-6 fw-bold text-success">
@@ -91,8 +94,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card text-center border-primary" data-bs-toggle="tooltip"
-                    title="Media diaria impresiones.">
+                <div class="card text-center border-primary" data-bs-toggle="tooltip" title="Media diaria impresiones.">
                     <div class="card-body">
                         <h6 class="card-title">Media Diaria impresiones en la ip</h6>
                         <p class="display-6 fw-bold text-primary">
@@ -136,9 +138,10 @@
             </div>
         </div>
     </div>
+
     
-    <div class="container py-4" >
-                <!-- Gráfico consumo -->
+    <div class="container py-4">
+        
         <div class="row">
             <div class="col">
                 <div class="card shadow-sm">
@@ -153,9 +156,13 @@
         </div>
     </div>
 
+
+
     <div class="container py-4 text-center">
         <label for="numDias">Número de días:</label>
         <select class="mb-4 text-center" name="numDias" id="numDias">
+            <option value="7">7</option>
+            <option value="15">15</option>
             <option value="30">30</option>
             <option value="60">60</option>
             <option value="90">90</option>
@@ -176,6 +183,20 @@
 
             <%- datasetPorcentajeToner %>
     </script>
+
+    <!-- Script Chart.js -->
+    <script>
+
+
+
+        generaChart('chart-data-impresiones', colors_8, 'chartImpresionesDiarias', 'Fecha', 'Impresiones' );
+
+        generaChart('chart-data-porcentajeToner', colorsNivelToner, 'chartNivelToner', 'Fecha', 'Porcentaje Tóner %' );
+
+    </script>
+
+
+
     <script>
 
         const urlActual = window.location.href;
@@ -194,12 +215,11 @@
         }
 
 
-        const ip = "<%= ipData.ip %>";
         // 1. Obtener una referencia al elemento select por su ID
         const selectElement = document.getElementById('numDias');
 
         // 2. Definir la base de la URL
-        const baseUrl = 'http://' + window.location.hostname + ':' + window.location.port + '/chart/chartIp/' + ip + '/';
+        const baseUrl = `http://${window.location.hostname}:${window.location.port}/chart/chartIp/<%= ipData.ip %>/`;
 
         // 3. Añadir el event listener para el evento 'change'
         selectElement.addEventListener('change', function () {
@@ -209,203 +229,6 @@
             // Redirigir la ventana a la URL construida
             window.location.href = baseUrl + valorSeleccionado;
         });  
-    </script>
-    <!-- Script Chart.js -->
-    <script>
-
-        const dataElement = document.getElementById('chart-data-impresiones');
-        let datasets;
-
-        try {
-            datasets = JSON.parse(dataElement.textContent);
-        } catch (e) {
-            console.error('Error al parsear datasets:', e);
-            datasets = [];
-        }
-
-        if (!Array.isArray(datasets)) {
-            console.error('datasets no es un array:', datasets);
-            datasets = [];
-        }
-
-        const colors = [
-            'rgb(255, 99, 132)',
-            'rgb(54, 162, 235)',
-            'rgb(255, 206, 86)',
-            'rgb(75, 192, 192)',
-            'rgb(153, 102, 255)',
-            'rgb(255, 159, 64)',
-            'rgb(201, 203, 207)',
-            'rgb(83, 102, 255)'
-        ];
-
-        const chartDatasets = datasets.map((dataset, index) => ({
-            label: dataset.label,
-            data: dataset.data,
-            borderColor: colors[index % colors.length],
-            backgroundColor: colors[index % colors.length].replace('rgb', 'rgba').replace(')', ', 0.1)'),
-            borderWidth: 2,
-            fill: false,
-            tension: 0.4,
-            pointRadius: 2,
-            pointHoverRadius: 4
-        }));
-
-        const ctx = document.getElementById('chartImpresionesDiarias').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                datasets: chartDatasets
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            title: function (context) {
-                                const fecha = new Date(context[0].parsed.x);
-                                return 'Fecha: ' + fecha.toLocaleDateString('es-ES', {
-                                    day: '2-digit',
-                                    month: '2-digit',
-                                    year: 'numeric'
-                                });
-                            },
-                            label: function (context) {
-                                return context.dataset.label + ': ' + context.parsed.y;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'day',
-                            displayFormats: {
-                                day: 'dd/MM/yyyy'
-                            },
-                            tooltipFormat: 'dd/MM/yyyy'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Fecha'
-                        }
-                    },
-                    y: {
-                        beginAtZero: false,
-                        title: {
-                            display: true,
-                            text: 'Contador'
-                        }
-                    }
-                }
-            }
-        });
-
-
-        const dataElementNivelToner = document.getElementById('chart-data-porcentajeToner');
-        let datasetsNivelToner;
-
-        try {
-           
-            datasetsNivelToner = JSON.parse(dataElementNivelToner.textContent);
-        } catch (e) {
-            console.error('Error al parsear datasets:', e);
-            datasets = [];
-        }
-
-        if (!Array.isArray(datasets)) {
-            console.error('datasets no es un array:', datasets);
-            datasets = [];
-        }
-
-        const colorsNivelToner = [
-            'rgb(0, 0, 0)',             //negro
-            'rgb(0, 255, 255)',         //cyan
-            'rgb(255, 0, 0)',         //rojo
-            'rgb(255, 255, 0)'          //amarillo
-        ];
-
-        const chartDatasetsNivelToner = datasetsNivelToner.map((dataset, index) => ({
-            label: dataset.label,
-            data: dataset.data,
-            borderColor: colorsNivelToner[index % colorsNivelToner.length],
-            backgroundColor: colors[index % colors.length].replace('rgb', 'rgba').replace(')', ', 0.1)'),
-            borderWidth: 2,
-            fill: false,
-            tension: 0.4,
-            pointRadius: 2,
-            pointHoverRadius: 4
-        }));
-
-        const ctxNivelToner = document.getElementById('chartNivelToner').getContext('2d');
-        new Chart(ctxNivelToner, {
-            type: 'line',
-            data: {
-                datasets: chartDatasetsNivelToner
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            title: function (context) {
-                                const fecha = new Date(context[0].parsed.x);
-                                return 'Fecha: ' + fecha.toLocaleDateString('es-ES', {
-                                    day: '2-digit',
-                                    month: '2-digit',
-                                    year: 'numeric'
-                                });
-                            },
-                            label: function (context) {
-                                return context.dataset.label + ': ' + context.parsed.y;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'day',
-                            displayFormats: {
-                                day: 'dd/MM/yyyy'
-                            },
-                            tooltipFormat: 'dd/MM/yyyy'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Fecha'
-                        }
-                    },
-                    y: {
-                        beginAtZero: false,
-                        title: {
-                            display: true,
-                            text: 'Porcentaje %'
-                        }
-                    }
-                }
-            }
-        });
     </script>
 
 

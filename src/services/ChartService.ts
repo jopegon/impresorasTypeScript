@@ -1,3 +1,4 @@
+import { InterfaceIp } from "../models/IpModel";
 import { RegistroInterface } from "../models/RegistroModel";
 import { IpService } from "./IpService";
 import { RegistroService } from "./RegistroService";
@@ -5,7 +6,7 @@ import { RegistroService } from "./RegistroService";
 export class ChartService {
 
 
-  /**   * Devuelve datasets con el número de impresiones diarias para una ip dada,
+  /**  Devuelve datasets con el número de impresiones diarias para una ip dada,
    * formatted for charting, using the most recent 'numRegistros' records.
    * Each dataset contains date and impression count values.
    */
@@ -17,10 +18,12 @@ export class ChartService {
     const datosPorIP = new Array<{ label: string, data: Array<{ x: string, y: number }> }>();
 
     const ipData = IpService.findByIp(ip);
+   
+    let ipLabel=`${ip} ${ipData?.localizacion}`
 
     if (ipData) {
 
-      //datosPorIP.push({ label: ip, data: [] });
+      datosPorIP.push({ label: ipLabel, data: [] });
 
       // Los registros ya estan ordenados por fecha descendente
       let registros = RegistroService.findByIp(ip, numRegistros);
@@ -62,8 +65,6 @@ export class ChartService {
 
       registros.shift() // Elimino el primer registro que no tiene valor real
 
-
-      datosPorIP.push({ label: ip, data: [] });
 
       registros.forEach((registro: RegistroInterface) => {
 
@@ -149,50 +150,17 @@ export class ChartService {
 
 
   // Método para obtener datos agrupados por IP para el gráfico
-  static getDataForChart() {
-    const registros = RegistroService.findAllRecords();
-
-    //console.log('Total de registros:', registros.length);
+  static getDataForChart(numeroDeRegistros:number): Array<{label: string; data: Array<{ x: string, y: number }>}> {
+    const listaIps :InterfaceIp[] = IpService.findAllIPs();
 
     // Agrupar por IP
-    const datosPorIP = new Map<string, Array<{ fecha: string, contador: number }>>();
+    const datosPorIP = Array<{label: string; data: Array<{ x: string, y: number }>}> ();
 
-    registros.forEach((registro) => {
-      if (!datosPorIP.has(registro.ip)) {
-        datosPorIP.set(registro.ip, []);
-      }
-
-      datosPorIP.get(registro.ip)?.push({
-        fecha: registro.fecha,
-        contador: registro.contador
-      });
+    listaIps.forEach((ip) => {
+      datosPorIP.push(ChartService.getDataForIPChart(ip.ip, numeroDeRegistros)[0]);
     });
 
-    // Ordenar los datos por fecha dentro de cada IP
-    datosPorIP.forEach((datos) => {
-      datos.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
-    });
-
-    // Convertir Map a array de objetos
-    const datasets: Array<{
-      label: string;
-      data: Array<{ x: string, y: number }>;
-    }> = [];
-
-    datosPorIP.forEach((datos, ip) => {
-      datasets.push({
-        label: ip,
-        data: datos.map(d => ({
-          x: d.fecha,
-          y: d.contador
-        }))
-      });
-    });
-
-    //console.log('Datasets generados:', datasets.length);
-    //console.log('Estructura:', JSON.stringify(datasets[0]));
-
-    return datasets;
+    return datosPorIP;
   }
 
 
