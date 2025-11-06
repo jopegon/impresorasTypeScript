@@ -12,14 +12,12 @@ export class ControlerChart {
 
     const nRegistros:string = req.params.numRegistros || '7';
 
-    let numRegistros:number = parseInt(nRegistros, 10);
+    let numRegistros:number = Number.parseInt(nRegistros, 10);
 
     try {
       const datasets = ChartService.getDataForChart(numRegistros);
 
       let sizeDatasets = datasets.length;
-
-      //console.log('Es array?', Array.isArray(datasets));
 
       res.render('contadores', {
         title: 'Gráfico de Contadores por IP',
@@ -39,13 +37,11 @@ export class ControlerChart {
 
       const nRegistros:string = req.params.numRegistros || '7';
 
-      const numRegistros:number = parseInt(nRegistros, 10);
+      const numRegistros:number = Number.parseInt(nRegistros, 10);
 
       const ipData = IpModel.findByIp(ip);
 
       const lastRecord = RegistroModel.getLastRecordConectedByIp(ip);
-
-      //constPrinter = IpService.getPrintersByIp(ip);
 
       const datasets = ChartService.getDataForIPChart(ip, numRegistros);
 
@@ -65,10 +61,7 @@ export class ControlerChart {
 
       impresionMedia = impresionesTotales / numeroRegistros;
 
-      //const disponibility = RegistroService.getDisponibilityByIp(ip);
       const disponibility = RegistroModel.getDisponibilityRangeByIp(ip, numRegistros);
-      //console.log('Enviando datasets al template:', datasets[0].data);
-      //console.log('Es array?', Array.isArray(datasets));
 
       res.render('chart', {
         title: `Última conexión ${lastRecord?.fecha} ${lastRecord?.hora}`,

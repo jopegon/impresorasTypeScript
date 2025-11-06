@@ -5,8 +5,8 @@ import { getLocalIP } from '../server/server';
 
 // Función auxiliar para validar el formato de una IP
 const isValidIp = (ip: string): boolean => {
-  const ipRegex =
-    /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/;
+  const ipPart = '(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])';
+  const ipRegex = new RegExp(`^${ipPart}(\\.${ipPart}){3}$`);
   return ipRegex.test(ip);
 };
 
@@ -29,7 +29,7 @@ export const getRecordsIp = async (req: Request, res: Response) => {
     // Responder con los datos de la impresora
     res.status(200).json(records);
   } catch (error) {
-    res.status(500).send('Error al consultar ip');
+    res.status(500).send(`Error al consultar ip ${error}`);
   }
 }
 
@@ -52,7 +52,7 @@ export const betweenDatesRecords = async (req: Request, res: Response) => {
     // Responder con los datos de la impresora
     res.status(200).json(records);
   } catch (error) {
-    res.status(500).send('Error al consultar registros');
+    res.status(500).send(`Error al consultar registros ${error}`);
   }
 
 }
@@ -98,7 +98,7 @@ export const lastNRecordsOfIp = async (req: Request, res: Response) => {
     // Responder con los datos de la impresora
     res.status(200).json(records);
   } catch (error) {
-    res.status(500).send('Error al consultar registros');
+    res.status(500).send(`Error al consultar registros ${error}`);
   }
 }
 
@@ -134,10 +134,10 @@ export const help = async (req: Request, res: Response) => {
 export const getRecordId = async (req: Request, res: Response) => {
 
   try {
-    const recordId = parseInt(req.params.id, 10);
+    const recordId = Number.parseInt(req.params.id, 10);
     // Validar que printerId sea un número válido
     // Validar que printerId sea un número válido
-    if (isNaN(recordId) || recordId <= 0) {
+    if (Number.isNaN(recordId) || recordId <= 0) {
       res.status(400).json({ error: 'El ID proporcionado no es válido. Debe ser un número positivo.' });
     }
     const printer = db.prepare('SELECT * FROM registros WHERE id = ?').get(recordId);
@@ -150,7 +150,7 @@ export const getRecordId = async (req: Request, res: Response) => {
     // Responder con los datos de la impresora
     res.status(200).json(printer);
   } catch (error) {
-    res.status(500).send('Error al consultar impresoras');
+    res.status(500).send(`Error al consultar impresoras ${error}`);
   }
 }
 

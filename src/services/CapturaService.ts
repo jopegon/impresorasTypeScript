@@ -14,16 +14,14 @@ export class CapturaService {
     static registrarIps(grabarSoloConectadas: boolean) {
         let listaImpresoras: Impresora[];
         listaImpresoras = IpModel.findAllPrinters() ?? [];
-        listaImpresoras.forEach((impresora) => {
+        for (let impresora of listaImpresoras){
             let captura = new ConsultaImpresora(impresora);
             captura.setTimeout(2000)
-            //listaPromesas.push(captura.obtenerDatos()); 
+
             captura.obtenerDatosImpresora().then((printer: Impresora) => {
                 let resultado: RegistroInterface;
                 resultado = this.printerToInterfaceRegistro(printer);
-                //console.log(`Conectada=${resultado.conectada}  ${resultado.modelo}  ${resultado.negro}`);
 
-                //console.log(`${resultado.fecha}  y ${resultado.hora}`);
                 if (grabarSoloConectadas) {
                     if (resultado.conectada) {
                         RegistroModel.insertUpdateRegistro(resultado);
@@ -31,7 +29,7 @@ export class CapturaService {
                 }
 
             });
-        });
+        };
     };
 
 

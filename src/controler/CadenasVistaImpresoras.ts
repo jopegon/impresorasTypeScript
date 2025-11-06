@@ -5,13 +5,9 @@ import { getLocalIP } from "../server/server";
 
 export class CadenasVistaImpresoras {
 
-  claseDivImpresoraIndividual!: string;
+  claseDivImpresoraIndividual:string= "d-flex flex-column align-items-center justify-content-center m-3 card";
 
-  constructor() {
-    this.claseDivImpresoraIndividual = "d-flex flex-column align-items-center justify-content-center m-3 card";
-  }
-
-  getFondo(impresora: Impresora): string {
+   getFondo(impresora: Impresora): string {
 
     let cadena: string = "";
 

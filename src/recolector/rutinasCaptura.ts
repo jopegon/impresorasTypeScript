@@ -17,11 +17,10 @@ const consultaIP = async (ip: string) => {
 const registraTodasIpsConectadas = () => {
     let listaImpresorasVacias: Impresora[];
     listaImpresorasVacias = IpModel.findAllPrinters() ?? [];
-    listaImpresorasVacias.forEach((impresoraVacia) => {
+    for (let impresoraVacia of listaImpresorasVacias){
         let captura: ConsultaImpresora = new ConsultaImpresora(impresoraVacia);
         captura.setTimeout(5000);
         captura.setRetries(3);
-        //listaPromesas.push(captura.obtenerDatos()); 
         captura.obtenerDatosImpresora().then((printer: Impresora) => {
             
             let resultado = printerToInterfaceRegistro(printer);
@@ -29,25 +28,24 @@ const registraTodasIpsConectadas = () => {
             if (resultado.conectada) {
                 RegistroModel.insertUpdateRegistro(resultado);
             }
-        });
-    });
+        });        
+    }
 };
 
 
 const registraTodasIps = () => {
     let listaImpresorasVacias: Impresora[];
     listaImpresorasVacias = IpModel.findAllPrinters() ?? [];
-    listaImpresorasVacias.forEach((impresoraVacia) => {
+
+    for (let impresoraVacia of listaImpresorasVacias){
         let captura = new ConsultaImpresora(impresoraVacia);
         captura.setTimeout(5000);
         captura.setRetries(3);
-        //listaPromesas.push(captura.obtenerDatos()); 
         captura.obtenerDatosImpresora().then((printer: Impresora) => {
             let resultado = printerToInterfaceRegistro(printer);
-            //console.log(`Conectada=${resultado.conectada}  ${resultado.modelo}  ${resultado.negro}`);
             RegistroModel.insertUpdateRegistro(resultado);
         });
-    });
+    };
 };
 
 const printerToInterfaceRegistro = (printer: Impresora) => {

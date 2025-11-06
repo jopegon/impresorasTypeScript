@@ -83,7 +83,7 @@ export class Impresora {
   }
 
   setNumeroDeSerie(numeroDeSerie: string){
-    return this.numeroDeSerie=numeroDeSerie;
+    this.numeroDeSerie=numeroDeSerie;
   }
   
 

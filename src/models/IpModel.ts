@@ -20,9 +20,10 @@ export class IpModel {
     let resultadoConsulta: InterfaceIp[] = [];
     let impresoras: Impresora[] = [];
     resultadoConsulta = db.prepare("SELECT * FROM ips").all() as InterfaceIp[];
-    resultadoConsulta.map((resultado: InterfaceIp) => {
+
+    for (let resultado of resultadoConsulta){
       impresoras.push(new Impresora(resultado.ip, resultado.localizacion));
-    });
+    }
 
     return impresoras;
   }

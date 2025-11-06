@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router} from 'express';
 
 import { contador, contadores, leeDB, lista, muestraInfo, paginaInicio, saluda } from '../controler/controlerImpresora';
 

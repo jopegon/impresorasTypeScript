@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 import { Impresora } from "../clases/Impresora";
 import { CadenaHtml } from "./CadenaHtmlTabla";
 import { CadenasVistaImpresoras } from "./CadenasVistaImpresoras";
@@ -14,7 +14,7 @@ export const saluda = async (req: Request, res: Response) => {
         console.error('Error al consultar impresoras:', error);
         res.status(500).json({ error: 'Error interno del servidor al consultar impresoras.' });
     }
-    finally{
+    finally {
         res.end();
     }
 };
@@ -23,7 +23,7 @@ export const leeDB = async (req: Request, res: Response) => {
 
     try {
         let impresoras: Impresora[] = [];
-        let promesas: Promise<void>[] = []; 
+        let promesas: Promise<void>[] = [];
 
         impresoras = IpModel.findAllPrinters() || [];
 
@@ -95,8 +95,7 @@ export const paginaInicio = (req: Request, res: Response) => {
 
 
 export const lista = async (request: Request, response: Response) => {
-    //const leer: LeeJSON = new LeeJSON();
-    //leer.cargaArchivo();
+
     let pp: ConsultaImpresora = new ConsultaImpresora();
 
     let promesas: Promise<void>[] = [];
@@ -121,36 +120,34 @@ export const lista = async (request: Request, response: Response) => {
                 response.write(`  <tr class="table-danger"> <td>`);
 
             }
-            else {
-
-                if (impExito.getColor() && (impExito.getAmarillo() <= 10 || impExito.getCyan() <= 10 || impExito.getMagenta() <= 10)) {
-                    response.write(` <tr class="table-danger"> <td>`);
-                }
-                else {
-                    response.write(`  <tr> <td>`);
-                }
-
+            else if (impExito.getColor() && (impExito.getAmarillo() <= 10 || impExito.getCyan() <= 10 || impExito.getMagenta() <= 10)) {
+                response.write(` <tr class="table-danger"> <td>`);
             }
+            else {
+                response.write(`  <tr> <td>`);
+            }
+
+        }
             response.write(`  ${impresora.getModelo()}</td>  <td> <a href="http://${impresora.getIp()}" target="_blank">${impresora.getIp()}</a></td> <td> ${impresora.getNumeroDeSerie()} </td>  <td>${impresora.getLocalizacion()}</td>
         <td>${impresora.getConectadaSiNo()}</td>
     <td>${impresora.getNegro()} %</td>`);
-            if (impresora.getColor()) {
-                response.write(`    <td>${impresora.getCyan()} %</td> <td>${impresora.getAmarillo()} %</td> <td>${impresora.getMagenta()} %</td>  </tr>  `);
-            } else {
-                response.write('<td></td> <td></td> <td></td>  </tr> ');
-            }
+        if (impresora.getColor()) {
+            response.write(`    <td>${impresora.getCyan()} %</td> <td>${impresora.getAmarillo()} %</td> <td>${impresora.getMagenta()} %</td>  </tr>  `);
+        } else {
+            response.write('<td></td> <td></td> <td></td>  </tr> ');
+        }
 
-            response.write('');
-        })
-            .catch((impError) => {
-                response.write(`No conecta ${impError.toString()}`);
-            });
+        response.write('');
+    })
+        .catch((impError) => {
+            response.write(`No conecta ${impError.toString()}`);
+        });
 
-    });
+});
 
-    await Promise.all(promesas);
+await Promise.all(promesas);
 
-    response.write(`<script>
+response.write(`<script>
 document.addEventListener("DOMContentLoaded", function() {
   var input = document.getElementById("myInput");
   var tableRows = document.querySelectorAll("#tabla tr");
@@ -169,21 +166,19 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 </script>`);
-    response.write(`</table>   <a class="m-2 **ms-auto** **d-block**" target="_blank" rel="noopener noreferrer" href="http://10.41.81.26:3500/records/help">help</a> </body> </html>`);
-    response.end(); // Termina la respuesta después de completar todas las operaciones  
+response.write(`</table>   <a class="m-2 **ms-auto** **d-block**" target="_blank" rel="noopener noreferrer" href="http://10.41.81.26:3500/records/help">help</a> </body> </html>`);
+response.end(); // Termina la respuesta después de completar todas las operaciones  
 };
 
 
 export const contador = async (request: Request, response: Response) => {
 
-    //res.sendFile(path.join(__dirname, 'views/indexF.html'));
     response.render('contador', {});
 }
 
 
-export const contadores= async (request: Request, response: Response) => {
+export const contadores = async (request: Request, response: Response) => {
 
-    let numeroGraficos:number = 3;
-    //res.sendFile(path.join(__dirname, 'views/indexF.html'));
-    response.render('contadores', {numeroGraficos: numeroGraficos});
+    let numeroGraficos: number = 3;
+    response.render('contadores', { numeroGraficos: numeroGraficos });
 }

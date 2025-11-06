@@ -1,11 +1,8 @@
 export class CadenaHtml {
 
-  constructor(){
 
-  }
- 
-getEncabezado():string{
-  return `<!DOCTYPE html>
+  getEncabezado(): string {
+    return `<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -57,7 +54,7 @@ tr:hover {background-color: #D6EEEE;}
     <th>Rojo</th>
   </tr> 
 </thead>`
-   ;
-}
+      ;
+  }
 }
 

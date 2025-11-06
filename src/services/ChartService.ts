@@ -1,6 +1,5 @@
 import { InterfaceIp } from "../models/IpInterface";
 import { IpModel } from "../models/IpModel";
-import { RegistroInterface } from "../models/RegistroInterface";
 import { RegistroModel } from "../models/RegistroService";
 
 
@@ -75,15 +74,12 @@ export class ChartService {
       registros.shift() // Elimino el primer registro que no tiene valor real
 
 
-      registros.forEach((registro: RegistroInterface) => {
-
+      for (let registro of registros){
         datosPorIP[0].data.push({
           x: registro.fecha,
           y: registro.contador
         });
-      });
-
-      //console.log('Estructura:', JSON.stringify(datasets[0]));
+      };
 
       return datosPorIP;
 
@@ -131,7 +127,7 @@ export class ChartService {
 
       registros.shift();  // Para que tenga el mismo número de días que grafico de contador impresiones
 
-      registros.forEach((registro: RegistroInterface) => {
+      for (let registro of registros ){
         porcentajeTonerPorIP[0].data.push({
           x: registro.fecha,
           y: registro.negro
@@ -148,7 +144,7 @@ export class ChartService {
           x: registro.fecha,
           y: registro.amarillo
         });
-      });
+      };
     }
 
     return porcentajeTonerPorIP;
@@ -160,11 +156,11 @@ export class ChartService {
     const listaIps: InterfaceIp[] = IpModel.findAllIPs();
 
     // Agrupar por IP
-    const datosPorIP = Array<{ label: string; data: Array<{ x: string, y: number }> }>();
+    const datosPorIP = new Array<{ label: string; data: Array<{ x: string, y: number }> }>();
 
-    listaIps.forEach((ip) => {
+    for (let ip of listaIps){
       datosPorIP.push(ChartService.getDataForIPChart(ip.ip, numeroDeRegistros)[0]);
-    });
+    };
 
     return datosPorIP;
   }

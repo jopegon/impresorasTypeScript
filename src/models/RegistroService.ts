@@ -14,7 +14,7 @@ export class RegistroModel {
   }
 
 
-  static insertUpdateRegistro = (regImp: RegistroInterface) => {
+  static readonly insertUpdateRegistro = (regImp: RegistroInterface) => {
 
     // ➡️ 1. Preparar y sanitizar los valores
     //const conectada = regImp.conectada === true ? 1 : (regImp.conectada === false ? 0 : 0);
@@ -70,7 +70,6 @@ export class RegistroModel {
       };
 
     } catch (error) {
-      // console.error("Datos que causaron el error:", regImp); // Línea útil para depurar
       throw new Error(`Error en insertUpdateRegistro: ${error}`);
     }
   };
@@ -84,16 +83,16 @@ export class RegistroModel {
     let resultadoConsulta: RegistroInterface[] = [];
     let registros: RegistroInterface[] = [];
     resultadoConsulta = db.prepare("SELECT * FROM registros").all() as RegistroInterface[];
-    resultadoConsulta.map((resultado: RegistroInterface) => {
-      registros.push(resultado);
-    });
 
+    for (let resultado of resultadoConsulta) {
+      registros.push(resultado);
+    }
     return registros;
   }
 
   static findByIp(ip: string, numRegistros: number): RegistroInterface[] | undefined {
     numRegistros += 1;
-    return db.prepare("SELECT * FROM registros WHERE ip = ? ORDER  BY fecha DESC LIMIT ?").all(ip, numRegistros) as RegistroInterface[] | RegistroInterface[]
+    return db.prepare("SELECT * FROM registros WHERE ip = ? ORDER  BY fecha DESC LIMIT ?").all(ip, numRegistros) as RegistroInterface[] | undefined;
   }
 
   static getLastRecordConectedByIp(ip: string): RegistroInterface | undefined {

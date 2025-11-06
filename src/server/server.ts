@@ -2,9 +2,9 @@ import express, { Application } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import routerImpresoras from "../routes/routerImpresoras";
-import path from "path";
+import path from "node:path";
 import routerRegistro from "../routes/routerApiRegistros";
-import os from "os";
+import os from "node:os";
 import routerChart from "../routes/routerChart";
 import favicon from 'serve-favicon';
 
@@ -29,8 +29,8 @@ export const getLocalIP = (): string | undefined => {
 
 export class Server {
 
-    private app: Application;
-    private port: number;
+    private readonly app: Application;
+    private readonly port: number;
 
     /*  lo dejo en comentarios por si en el futuro quiero configurar CORS de forma más específica
         private corsOptions = {

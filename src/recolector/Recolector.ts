@@ -9,10 +9,6 @@ import { registraTodasIps, registraTodasIpsConectadas } from "./rutinasCaptura";
 
 export class Recolector {
 
-    constructor() {
-    }
-
-
     public recolecta() {
         try {
             this.inicioDia();
@@ -36,7 +32,7 @@ export class Recolector {
     */
     private cadaHora() {
         cron.schedule("0 1-23 * * *", () => {
-        //cron.schedule("* * * * *", () => {  //con esto se ejecuta cada minuto
+            //cron.schedule("* * * * *", () => {  //con esto se ejecuta cada minuto
             console.log(`Ejecuto rutina cadaHora a las ${new Date().toLocaleTimeString()}`);
             registraTodasIpsConectadas();
         });
