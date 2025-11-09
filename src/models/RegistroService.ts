@@ -14,7 +14,7 @@ export class RegistroModel {
   }
 
 
-  static readonly insertUpdateRegistro = (regImp: RegistroInterface) => {
+  static  insertUpdateRegistro (regImp: RegistroInterface): { changes: number, lastInsertRowid: number|bigint } {
 
     // ➡️ 1. Preparar y sanitizar los valores
     //const conectada = regImp.conectada === true ? 1 : (regImp.conectada === false ? 0 : 0);
@@ -66,7 +66,7 @@ export class RegistroModel {
 
       return {
         changes: result.changes,
-        lastInsertRowid: result.lastInsertRowid,
+        lastInsertRowid: result.lastInsertRowid
       };
 
     } catch (error) {

@@ -4,7 +4,7 @@ import { OperacionesGenericas } from "./OperacionesGenericas";
 
 export class ConstructorOperacionesOID {
 
-    MapaObjetos = new Map();
+    MapaObjetos:Map<String, OperacionesGenericas> = new Map();
     
     operacionesModelo(modelo: string): OperacionesGenericas {
 
@@ -19,7 +19,7 @@ export class ConstructorOperacionesOID {
     
         if (this.MapaObjetos.has(modelo.toString())) {
             //console.log(`Sí encuentro al modelo --${modelo}--`)
-            return this.MapaObjetos.get(modelo.toString());
+            return this.MapaObjetos.get(modelo.toString())!;
         }
         else {
             //console.log(`No encuentro al modelo --${modelo}--`)

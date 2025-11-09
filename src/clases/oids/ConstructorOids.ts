@@ -17,7 +17,7 @@ export class ConstructorOids {
     con las particularidades de cada modelo de impresora
     */
 
-    MapaObjetos = new Map<string, OidIniciales>([
+    MapaObjetos: Map<string, OidIniciales>  = new Map<string, OidIniciales>([
         ["B430", new OidsB430()],
         ["EPSON AL-M4000", new OidsEpsonM4000()],
         ["KONICA MINOLTA bizhub 5020i", new Oids5020i()],
