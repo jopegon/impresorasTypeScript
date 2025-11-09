@@ -1,6 +1,5 @@
-
+import { Impresora } from "../clases/Impresora";
 import db from "../config/db";
-import { Impresora } from "./Impresora";
 import { InterfaceIp } from "./IpInterface";
 
 

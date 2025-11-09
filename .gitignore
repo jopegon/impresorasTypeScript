@@ -1,0 +1,12 @@
+node_modules
+.scannerwork/
+coverage
+package-lock.json
+dist/clases/
+dist/config/
+dist/controler/
+dist/index.js
+dist/models/
+dist/routes/
+dist/server/
+dist/services/

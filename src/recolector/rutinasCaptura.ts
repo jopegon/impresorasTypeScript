@@ -1,4 +1,4 @@
-import { Impresora } from "../models/Impresora";
+import { Impresora } from "../clases/Impresora";
 import { IpModel } from "../models/IpModel";
 import { RegistroModel } from "../models/RegistroService";
 import { CapturaService } from "../services/CapturaService";

@@ -1,9 +1,8 @@
-
+import { Impresora } from "../clases/Impresora";
 import { ConsultaImpresora } from "./ConsultaImpresora";
 import { RegistroInterface } from "../models/RegistroInterface";
 import { IpModel } from "../models/IpModel";
 import { RegistroModel } from "../models/RegistroService";
-import { Impresora } from "../models/Impresora";
 
 
 export class CapturaService {

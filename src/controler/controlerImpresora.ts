@@ -1,5 +1,5 @@
 import path from "node:path";
-import { Impresora } from "../models/Impresora";
+import { Impresora } from "../clases/Impresora";
 import { CadenaHtml } from "./CadenaHtmlTabla";
 import { CadenasVistaImpresoras } from "./CadenasVistaImpresoras";
 import { ConsultaImpresora } from "../services/ConsultaImpresora";
