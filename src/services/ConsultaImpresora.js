@@ -54,7 +54,8 @@ export class ConsultaImpresora {
     return await new Promise((resolve, reject) => {
       this.session.get(oids, (error, varbinds) => {
         if (error) {
-          reject(error);
+          //reject(error);
+          reject(error instanceof Error ? error : new Error(String(error)));
         } else {
           resolve(varbinds);
         }
@@ -69,19 +70,14 @@ export class ConsultaImpresora {
   */
   async etapaObtenerModelo() {
 
-    try {
-      const varbinds = await this.snmpGet(this.oidsIniciales.getOidsModelo());
-      this.impresora.setConectada(true);
-      this.impresora.setModelo(this.getVarbinds(varbinds, this.oidsIniciales.getOidModelo()));
+    const varbinds = await this.snmpGet(this.oidsIniciales.getOidsModelo());
+    this.impresora.setConectada(true);
+    this.impresora.setModelo(this.getVarbinds(varbinds, this.oidsIniciales.getOidModelo()));
 
-      // Adapto las propiedades de oids a cada impresora 
-      this.oidsIniciales = new ConstructorOids().OidsInicialesDe(this.impresora.getModelo());
+    // Adapto las propiedades de oids a cada impresora 
+    this.oidsIniciales = new ConstructorOids().OidsInicialesDe(this.impresora.getModelo());
 
-      this.operaciones = new ConstructorOperacionesOID().operacionesModelo(this.impresora.getModelo());
-
-    } catch (error) {
-      this.impresora.setConectada(false);
-    }
+    this.operaciones = new ConstructorOperacionesOID().operacionesModelo(this.impresora.getModelo());
   }
 
 
@@ -91,58 +87,43 @@ export class ConsultaImpresora {
 
   async etapaNivelesNegro() {
 
+    const varbinds = await this.snmpGet(this.oidsIniciales.getOidsBN());
 
-    try {
-      const varbinds = await this.snmpGet(this.oidsIniciales.getOidsBN());
-
-      this.impresora.setNegro(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelNegro(), this.oidsIniciales.getOidFullCapacityNegro()));
-
-    } catch (error) {
-      // No se hace nada porque puede que la impresora esté desconectada
-    }
+    this.impresora.setNegro(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelNegro(), this.oidsIniciales.getOidFullCapacityNegro()));
 
   }
 
   async etapaContador() {
 
-    try {
-      const varbinds = await this.snmpGet(this.oidsIniciales.getOidsContadorImpresiones());      
-      this.impresora.setContador(this.getVarbinds(varbinds, this.oidsIniciales.getOidContadorImpresiones())[0]);
-    } catch (error) {
-      // No se hace nada porque puede que la impresora esté desconectada
-    }
+    const varbinds = await this.snmpGet(this.oidsIniciales.getOidsContadorImpresiones());
+    this.impresora.setContador(this.getVarbinds(varbinds, this.oidsIniciales.getOidContadorImpresiones())[0]);
+
   }
 
   async etapaNumeroDeSerie() {
-    try {
-      const varbinds = await this.snmpGet(this.oidsIniciales.getOidsNumeroDeSerie());
-      this.impresora.setNumeroDeSerie(this.getVarbinds(varbinds, this.oidsIniciales.getOidNumeroDeSerie().toString()));
-    } catch (error) {
-      // No se hace nada porque puede que la impresora esté desconectada
-    }
+
+    const varbinds = await this.snmpGet(this.oidsIniciales.getOidsNumeroDeSerie());
+    this.impresora.setNumeroDeSerie(this.getVarbinds(varbinds, this.oidsIniciales.getOidNumeroDeSerie().toString()));
+
   }
 
 
   async etapaNivelesColor() {
 
-    try {
-      const varbinds = await this.snmpGet(this.oidsIniciales.getOidsColor());
 
-      this.impresora.setColor(true);
+    const varbinds = await this.snmpGet(this.oidsIniciales.getOidsColor());
 
-      this.impresora.setCyan(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelCyan(),
-        this.oidsIniciales.getOidFullCapacityCyan()));
+    this.impresora.setColor(true);
 
-      this.impresora.setAmarillo(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelAmarillo(),
-        this.oidsIniciales.getOidFullCapacityAmarillo()));
+    this.impresora.setCyan(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelCyan(),
+      this.oidsIniciales.getOidFullCapacityCyan()));
 
-      this.impresora.setMagenta(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelMagenta(),
-        this.oidsIniciales.getOidFullCapacityMagenta()));
+    this.impresora.setAmarillo(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelAmarillo(),
+      this.oidsIniciales.getOidFullCapacityAmarillo()));
 
+    this.impresora.setMagenta(await this.obtenerNivel(varbinds, this.oidsIniciales.getOidTonerLevelMagenta(),
+      this.oidsIniciales.getOidFullCapacityMagenta()));
 
-    } catch (error) {
-      // No se hace nada porque puede que la impresora no sea a color o que esté  desconectada
-    }
 
   }
 
@@ -152,7 +133,7 @@ export class ConsultaImpresora {
   async obtenerNivel(varbinds, oidActual, oidLleno) {
 
     const actual = this.getVarbinds(varbinds, oidActual);
-    
+
     const lleno = this.getVarbinds(varbinds, oidLleno);
 
     return this.operaciones.getNivel(actual, lleno);
@@ -168,7 +149,7 @@ export class ConsultaImpresora {
        una vez sabemos el modelo de impresora, podemos adaptar las siguientes etapas
        a las particularidades de cada modelo    
        */
-      
+
       await this.etapaObtenerModelo(); // Ejecuta la etapa de identificación
 
       await this.etapaContador();
@@ -185,6 +166,7 @@ export class ConsultaImpresora {
       await this.etapaNivelesColor(); // Ejecuta la etapa de datos color
 
     } catch (error) {
+      console.warn('No se pudo conectar con la impresora etapa ObtenerDatosImpresora:', error.message);
       /*
       * Es la manera de detectar impresora desconectada 
         por defecto la clase impresora el valor conectada 

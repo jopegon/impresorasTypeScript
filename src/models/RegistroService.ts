@@ -101,10 +101,7 @@ export class RegistroModel {
   }
 
   static getFirstRecordConectedByIp(ip: string): RegistroInterface | undefined {
-    {
-      return db.prepare("SELECT * FROM registros WHERE ip = ? AND conectada = 1 ORDER BY fecha DESC, hora ASC LIMIT 1")
-        .get(ip) as RegistroInterface | undefined
-    }
+    return db.prepare("SELECT * FROM registros WHERE ip = ? AND conectada = 1 ORDER BY fecha DESC, hora ASC LIMIT 1").get(ip) as RegistroInterface | undefined
   }
 
   static delete(id: number) {
@@ -115,10 +112,10 @@ export class RegistroModel {
 
   static countRecordsRangeByIp(ip: string, range: number): number {
     const result = db.prepare("SELECT COUNT(*) as count FROM " +
-      "(SELECT * FROM registros WHERE ip = ? ORDER BY id DESC LIMIT ?) AS ultimos_registros;")
-      .get(ip, range) as { count: number } | undefined; if (!result) {
-        return 0;
-      }
+      "(SELECT * FROM registros WHERE ip = ? ORDER BY id DESC LIMIT ?) AS ultimos_registros;").get(ip, range) as { count: number } | undefined;
+    if (!result) {
+      return 0;
+    }
     return result.count;
   }
 

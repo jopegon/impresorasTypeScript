@@ -21,10 +21,6 @@ export class Impresora {
     this.localizacion = localizacion;
   }
 
-  getDireccionIp() {
-    return "http://" + this.ip;
-  }
-
   getConectadaSiNo(){
     let siNo="";
     if (this.conectada)

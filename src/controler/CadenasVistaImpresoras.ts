@@ -1,5 +1,5 @@
 import { puerto } from "..";
-import { Impresora } from "../clases/Impresora";
+import { Impresora } from "../models/Impresora";
 import { getLocalIP } from "../server/server";
 
 

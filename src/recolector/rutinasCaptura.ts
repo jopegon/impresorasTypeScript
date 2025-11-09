@@ -1,7 +1,7 @@
-import { Impresora } from "../clases/Impresora";
+import { Impresora } from "../models/Impresora";
 import { IpModel } from "../models/IpModel";
-import { RegistroInterface } from "../models/RegistroInterface";
 import { RegistroModel } from "../models/RegistroService";
+import { CapturaService } from "../services/CapturaService";
 import { ConsultaImpresora } from "../services/ConsultaImpresora";
 
 
@@ -9,7 +9,7 @@ const consultaIP = async (ip: string) => {
 
     const captura = new ConsultaImpresora(new Impresora(ip, ''));
     const printer = await captura.obtenerDatosImpresora();
-    return printerToInterfaceRegistro(printer);
+    return CapturaService.printerToInterfaceRegistro(printer);
 
 }
 
@@ -23,7 +23,7 @@ const registraTodasIpsConectadas = () => {
         captura.setRetries(3);
         captura.obtenerDatosImpresora().then((printer: Impresora) => {
             
-            let resultado = printerToInterfaceRegistro(printer);
+            let resultado = CapturaService.printerToInterfaceRegistro(printer);
 
             if (resultado.conectada) {
                 RegistroModel.insertUpdateRegistro(resultado);
@@ -42,35 +42,12 @@ const registraTodasIps = () => {
         captura.setTimeout(5000);
         captura.setRetries(3);
         captura.obtenerDatosImpresora().then((printer: Impresora) => {
-            let resultado = printerToInterfaceRegistro(printer);
+            let resultado = CapturaService.printerToInterfaceRegistro(printer);
             RegistroModel.insertUpdateRegistro(resultado);
         });
     };
 };
 
-const printerToInterfaceRegistro = (printer: Impresora) => {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // Ajusta la diferencia de zona horaria
-    //resultado.fecha = now.toISOString().split("T")[0]; 
-    //resultado.hora = new Date().toLocaleTimeString() ;
-    const resultado: RegistroInterface = {
-        id: 0,
-        fecha: now.toISOString().split("T")[0],
-        hora: new Date().toLocaleTimeString(),
-        ip: printer.getIp(),
-        conectada: printer.getConectada(),
-        numSerie: printer.getNumeroDeSerie().toString(),
-        modelo: printer.getModelo().toString(),
-        contador: printer.getContador(),
-        negro: printer.getNegro(),
-        color: printer.getColor(),
-        cyan: printer.getCyan(),
-        amarillo: printer.getAmarillo(),
-        rojo: printer.getMagenta()
-    }
-    return resultado;
-
-}
 
 
 export { registraTodasIpsConectadas, registraTodasIps, consultaIP }

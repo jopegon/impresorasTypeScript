@@ -1,10 +1,62 @@
 import { InterfaceIp } from "../models/IpInterface";
 import { IpModel } from "../models/IpModel";
+import { RegistroInterface } from "../models/RegistroInterface";
 import { RegistroModel } from "../models/RegistroService";
 
 
 export class ChartService {
 
+  /**
+   * Este método normaliza los registros de contadores, en el caso de que haya registros sin valor (0),
+   * se rellenan con el último valor conocido, recorrendo la lista de registros dos veces, una de
+   * izquierda a derecha y otra de derecha a izquierda.
+   * @param registros 
+   * @returns registros contadores sin valor se rellenan con el último conocido
+   */
+  private static rellenoContadoresConUltimoValorConocido(registros: RegistroInterface[]): RegistroInterface[] {
+
+    for (let i = 0; i < registros.length - 1; i++) {
+      if (registros[i].contador > 0 && registros[i + 1].contador === 0) {
+        registros[i + 1].contador = registros[i].contador;
+      }
+    }
+    for (let i = registros.length - 1; i > 0; i--) {
+      if (registros[i].contador > 0 && registros[i - 1].contador === 0) {
+        registros[i - 1].contador = registros[i].contador;
+      }
+    }
+    return registros;
+  }
+
+    /**
+   * Calcula las impresiones diarias realizadas.
+   * 
+   * @param registros 
+   * @returns registros contadores contiene el número de impresiones diarias
+   */
+  private static calculaImpresiones(registros: RegistroInterface[]): RegistroInterface[] {
+    // Calculo los contadores diarios a partir de los contadores acumulados
+    for (let i = registros.length - 1; i >= 1; i--) {
+
+      // No sería necesario comprobar que el anterior sea mayor que 0 por los fors anteriores
+      if (registros[i].contador > 0 && registros[i - 1].contador > 0) {
+
+        // Si el número de serie es el mismo, calculo la diferencia sino pongo a 0
+        if (registros[i].numSerie === registros[i - 1].numSerie) {
+
+          registros[i].contador = registros[i].contador - registros[i - 1].contador;
+
+          // Aseguro que no haya valores negativos
+          if (registros[i].contador < 0) {
+            registros[i].contador = 0;
+          }
+        } else {
+          registros[i].contador = 0;
+        }
+      }
+    }
+    return registros
+  }
 
   /**  Devuelve datasets con el número de impresiones diarias para una ip dada,
    * formatted for charting, using the most recent 'numRegistros' records.
@@ -15,78 +67,46 @@ export class ChartService {
     data: Array<{ x: string, y: number }>;
   }> {
 
-    const datosPorIP = new Array<{ label: string, data: Array<{ x: string, y: number }> }>();
+    let datosPorIP = new Array<{ label: string, data: Array<{ x: string, y: number }> }>();
 
     const ipData = IpModel.findByIp(ip);
 
-    let ipLabel = `${ip} ${ipData?.localizacion}`
+    let ipLabel = `${ip} ${ipData?.localizacion}`;
 
     if (ipData) {
 
       datosPorIP.push({ label: ipLabel, data: [] });
 
       // Los registros ya estan ordenados por fecha descendente
-      let registros = RegistroModel.findByIp(ip, numRegistros);
+      let registros: RegistroInterface[] | undefined = RegistroModel.findByIp(ip, numRegistros);
 
       if (!registros) {
-        return [];
+        return datosPorIP;
       }
 
       // Invierto el orden para tenerlos de más antiguo a más reciente
       registros = registros.reverse();
 
 
-      // Relleno los contadores 0 con el último contador conocido
-      //  tanto hacia adelante como hacia atrás
-      for (let i = 0; i < registros.length - 1; i++) {
-        if (registros[i].contador > 0 && registros[i + 1].contador === 0) {
-          registros[i + 1].contador = registros[i].contador;
-        }
-      }
-      for (let i = registros.length - 1; i > 0; i--) {
-        if (registros[i].contador > 0 && registros[i - 1].contador === 0) {
-          registros[i - 1].contador = registros[i].contador;
-        }
-      }
+      /* Normalizo los contadores rellenando los ceros con el último valor conocido
+      *  Esto es necesario para que el cálculo de impresiones diarias sea correcto
+      * en el caso de que haya días sin registros
+      */
+      registros = this.rellenoContadoresConUltimoValorConocido(registros);
 
-
-      // Calculo los contadores diarios a partir de los contadores acumulados
-      for (let i = registros.length - 1; i >= 1; i--) {
-
-        // No sería necesario comprobar que el anterior sea mayor que 0 por los fors anteriores
-        if (registros[i].contador > 0 && registros[i - 1].contador > 0) {
-
-          // Si el número de serie es el mismo, calculo la diferencia sino pongo a 0
-          if (registros[i].numSerie === registros[i - 1].numSerie) {
-            
-            registros[i].contador = registros[i].contador - registros[i - 1].contador;
-            
-            // Aseguro que no haya valores negativos
-            if (registros[i].contador < 0) {
-              registros[i].contador = 0;
-            }
-          } else {
-            registros[i].contador = 0;
-          }
-        }
-      }
+      registros = this.calculaImpresiones(registros);
 
       registros.shift() // Elimino el primer registro que no tiene valor real
 
 
-      for (let registro of registros){
+      for (let registro of registros) {
         datosPorIP[0].data.push({
           x: registro.fecha,
           y: registro.contador
         });
       };
-
-      return datosPorIP;
-
     }
-    else {
-      return [];
-    }
+    return datosPorIP;
   }
 
 
@@ -110,10 +130,12 @@ export class ChartService {
     const ipData = IpModel.findByIp(ip);
 
     if (ipData) {
-      porcentajeTonerPorIP.push({ label: 'negro', data: [] });
-      porcentajeTonerPorIP.push({ label: 'cyan', data: [] });
-      porcentajeTonerPorIP.push({ label: 'rojo', data: [] });
-      porcentajeTonerPorIP.push({ label: 'amarillo', data: [] });
+      porcentajeTonerPorIP.push(
+        { label: 'negro', data: [] },
+        { label: 'cyan', data: [] },
+        { label: 'rojo', data: [] },
+        { label: 'amarillo', data: [] }
+      );
 
       // Los registros ya estan ordenados por fecha descendente
       let registros = RegistroModel.findByIp(ip, numRegistros);
@@ -127,7 +149,7 @@ export class ChartService {
 
       registros.shift();  // Para que tenga el mismo número de días que grafico de contador impresiones
 
-      for (let registro of registros ){
+      for (let registro of registros) {
         porcentajeTonerPorIP[0].data.push({
           x: registro.fecha,
           y: registro.negro
@@ -158,12 +180,11 @@ export class ChartService {
     // Agrupar por IP
     const datosPorIP = new Array<{ label: string; data: Array<{ x: string, y: number }> }>();
 
-    for (let ip of listaIps){
+    for (let ip of listaIps) {
       datosPorIP.push(ChartService.getDataForIPChart(ip.ip, numeroDeRegistros)[0]);
     };
 
     return datosPorIP;
   }
-
 
 }

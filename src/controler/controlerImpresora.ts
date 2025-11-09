@@ -1,9 +1,9 @@
 import path from "node:path";
-import { Impresora } from "../clases/Impresora";
+import { Impresora } from "../models/Impresora";
 import { CadenaHtml } from "./CadenaHtmlTabla";
 import { CadenasVistaImpresoras } from "./CadenasVistaImpresoras";
 import { ConsultaImpresora } from "../services/ConsultaImpresora";
-import { Request, Response } from 'express';
+import { Request, RequestHandler, Response } from 'express';
 import { IpModel } from "../models/IpModel";
 
 
@@ -28,7 +28,7 @@ export const leeDB = async (req: Request, res: Response) => {
         impresoras = IpModel.findAllPrinters() || [];
 
         promesas = impresoras.map((impresora: Impresora) => {
-            let pp = new ConsultaImpresora(impresora);
+            const pp = new ConsultaImpresora(impresora);
 
             return pp.obtenerDatosImpresora()
                 .then((resultado: Impresora) => {
@@ -59,7 +59,7 @@ export const muestraInfo = async (request: Request, response: Response) => {
 
     let promesas: Promise<void>[] = [];
 
-    let cadenasHtml = new CadenasVistaImpresoras();
+    const cadenasHtml: CadenasVistaImpresoras = new CadenasVistaImpresoras();
     response.write(cadenasHtml.getEncabezado());
 
     //promesas = leer.getListaImpresoras().map(async (impresora: Impresora) => {
@@ -89,7 +89,7 @@ export const muestraInfo = async (request: Request, response: Response) => {
     response.end(); // Termina la respuesta después de completar todas las operaciones
 };
 
-export const paginaInicio = (req: Request, res: Response) => {
+export const paginaInicio: RequestHandler = (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, "../../public/views", "/indexF.html"));
 };
 
@@ -100,7 +100,7 @@ export const lista = async (request: Request, response: Response) => {
 
     let promesas: Promise<void>[] = [];
 
-    let cadenasHtml = new CadenaHtml();
+    const cadenasHtml: CadenaHtml = new CadenaHtml();
 
 
 
@@ -113,7 +113,7 @@ export const lista = async (request: Request, response: Response) => {
 
         pp = new ConsultaImpresora(impresora);
 
-        return pp.obtenerDatosImpresora().then((impExito) => {
+        return pp.obtenerDatosImpresora().then((impExito: Impresora) => {
 
             if (impExito.getConectada() && (impExito.getNegro() <= 10)) {
 
@@ -127,27 +127,27 @@ export const lista = async (request: Request, response: Response) => {
                 response.write(`  <tr> <td>`);
             }
 
-        }
+
             response.write(`  ${impresora.getModelo()}</td>  <td> <a href="http://${impresora.getIp()}" target="_blank">${impresora.getIp()}</a></td> <td> ${impresora.getNumeroDeSerie()} </td>  <td>${impresora.getLocalizacion()}</td>
         <td>${impresora.getConectadaSiNo()}</td>
     <td>${impresora.getNegro()} %</td>`);
-        if (impresora.getColor()) {
-            response.write(`    <td>${impresora.getCyan()} %</td> <td>${impresora.getAmarillo()} %</td> <td>${impresora.getMagenta()} %</td>  </tr>  `);
-        } else {
-            response.write('<td></td> <td></td> <td></td>  </tr> ');
-        }
+            if (impresora.getColor()) {
+                response.write(`    <td>${impresora.getCyan()} %</td> <td>${impresora.getAmarillo()} %</td> <td>${impresora.getMagenta()} %</td>  </tr>  `);
+            } else {
+                response.write('<td></td> <td></td> <td></td>  </tr> ');
+            }
 
-        response.write('');
-    })
-        .catch((impError) => {
-            response.write(`No conecta ${impError.toString()}`);
-        });
+            response.write('');
+        })
+            .catch((impError) => {
+                response.write(`No conecta ${impError.toString()}`);
+            });
 
-});
+    });
 
-await Promise.all(promesas);
+    await Promise.all(promesas);
 
-response.write(`<script>
+    response.write(`<script>
 document.addEventListener("DOMContentLoaded", function() {
   var input = document.getElementById("myInput");
   var tableRows = document.querySelectorAll("#tabla tr");
@@ -166,19 +166,18 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 </script>`);
-response.write(`</table>   <a class="m-2 **ms-auto** **d-block**" target="_blank" rel="noopener noreferrer" href="http://10.41.81.26:3500/records/help">help</a> </body> </html>`);
-response.end(); // Termina la respuesta después de completar todas las operaciones  
+    response.write(`</table>   <a class="m-2 **ms-auto** **d-block**" target="_blank" rel="noopener noreferrer" href="http://10.41.81.26:3500/records/help">help</a> </body> </html>`);
+    response.end(); // Termina la respuesta después de completar todas las operaciones  
 };
 
 
 export const contador = async (request: Request, response: Response) => {
-
     response.render('contador', {});
 }
 
 
 export const contadores = async (request: Request, response: Response) => {
 
-    let numeroGraficos: number = 3;
+    const numeroGraficos: number = 3;
     response.render('contadores', { numeroGraficos: numeroGraficos });
 }

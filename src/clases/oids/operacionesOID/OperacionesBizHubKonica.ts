@@ -6,8 +6,8 @@ export class OperacionesBizhub extends OperacionesGenericas {
 
     getNivel(nivelActual:number, nivelLleno:number): number {
 
-        let listaNumeros = nivelActual.toString().split(",");
-        let numero:number =Number(listaNumeros[0]);
+        const listaNumeros = nivelActual.toString().split(",");
+        const numero:number =Number(listaNumeros[0]);
         return numero;
         
     }

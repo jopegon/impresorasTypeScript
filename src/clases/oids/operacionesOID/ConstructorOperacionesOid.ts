@@ -1,4 +1,4 @@
-import { operacionesBizhub } from "./OperacionesBizHubKonica";
+import { OperacionesBizhub } from "./OperacionesBizHubKonica";
 import { OperacionesGenericas } from "./OperacionesGenericas";
 
 
@@ -12,7 +12,7 @@ export class ConstructorOperacionesOID {
         // Si está dentro del mapa de objetos devuelve el Objeto determinado
         // sino el objeto necesitado es el generico y lo devuelve    
         
-        this.MapaObjetos.set("KONICA MINOLTA bizhub 5020i", new operacionesBizhub());
+        this.MapaObjetos.set("KONICA MINOLTA bizhub 5020i", new OperacionesBizhub());
          
 
         //console.log(`modelo --${modelo}--`)

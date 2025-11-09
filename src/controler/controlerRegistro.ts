@@ -4,7 +4,7 @@ import { getLocalIP } from '../server/server';
 
 
 // Función auxiliar para validar el formato de una IP
-const isValidIp = (ip: string): boolean => {
+export const isValidIp = (ip: string): boolean => {
   const ipPart = '(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])';
   const ipRegex = new RegExp(`^${ipPart}(\\.${ipPart}){3}$`);
   return ipRegex.test(ip);
@@ -75,7 +75,7 @@ export const betweenDatesIpRecords = async (req: Request, res: Response) => {
     // Responder con los datos de la impresora
     res.status(200).json(records);
   } catch (error) {
-    res.status(500).send('Error al consultar registros');
+    res.status(500).send(`Error al consultar registros ${error}`);
   }
 
 }
@@ -176,7 +176,7 @@ export const getIp = async (req: Request, res: Response) => {
     // Responder con los datos de la impresora
     res.status(200).json(printer);
   } catch (error) {
-    res.status(500).send('Error al consultar ip');
+    res.status(500).send(`Error al consultar ip ${error}`);
   }
 }
 
