@@ -1,6 +1,6 @@
 import { Impresora } from "../clases/Impresora";
 import { IpModel } from "../models/IpModel";
-import { RegistroModel } from "../models/RegistroService";
+import { RegistroService } from "../models/RegistroService";
 import { CapturaService } from "../services/CapturaService";
 import { ConsultaImpresora } from "../services/ConsultaImpresora";
 
@@ -26,7 +26,7 @@ const registraTodasIpsConectadas = () => {
             let resultado = CapturaService.printerToInterfaceRegistro(printer);
 
             if (resultado.conectada) {
-                RegistroModel.insertUpdateRegistro(resultado);
+                RegistroService.insertUpdateRegistro(resultado);
             }
         });        
     }
@@ -43,7 +43,7 @@ const registraTodasIps = () => {
         captura.setRetries(3);
         captura.obtenerDatosImpresora().then((printer: Impresora) => {
             let resultado = CapturaService.printerToInterfaceRegistro(printer);
-            RegistroModel.insertUpdateRegistro(resultado);
+            RegistroService.insertUpdateRegistro(resultado);
         });
     };
 };

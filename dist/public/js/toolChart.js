@@ -85,6 +85,7 @@ const crearChart = (chartDataOrId, arrayColores, canvasName, leyendaX, leyendaY)
     // 4. Lógica compartida para CREAR y DEVOLVER el Chart
     const ctx = document.getElementById(canvasName).getContext('2d');
     
+    console.log(chartDatasets);
     return new Chart(ctx, {
         type: 'line',
         data: {

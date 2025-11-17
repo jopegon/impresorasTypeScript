@@ -3,7 +3,8 @@ import db from "../config/db";
 import { RegistroInterface } from "../models/RegistroInterface";
 
 
-export class RegistroModel {
+export class RegistroService {
+
   static create(ip: string, localizacion: string, observaciones?: string) {
     const stmt = db.prepare(`
       INSERT INTO ips (ip, localizacion, observaciones)
@@ -94,6 +95,11 @@ export class RegistroModel {
     numRegistros += 1;
     return db.prepare("SELECT * FROM registros WHERE ip = ? ORDER  BY fecha DESC LIMIT ?").all(ip, numRegistros) as RegistroInterface[] | undefined;
   }
+
+  static findByIpNdays(ip: string, numRegistros: number): RegistroInterface[] | undefined {
+    return db.prepare("SELECT * FROM registros WHERE ip=? AND fecha BETWEEN DATE('now', '-' || ? || ' days') AND DATE('now') ORDER  BY fecha DESC;").all(ip, numRegistros) as RegistroInterface[] | undefined;
+  }
+
 
   static getLastRecordConectedByIp(ip: string): RegistroInterface | undefined {
     return db.prepare("SELECT * FROM registros WHERE ip = ? AND conectada = 1 ORDER BY fecha DESC, hora DESC LIMIT 1")

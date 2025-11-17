@@ -32,7 +32,8 @@
     <div class="mt-2 d-flex justify-content-center flex-wrap container-fluid">
         <span class="me-2">Número de días: </span>
         <select name="numDias" id="numDias">
-            <option value="28">28</option>
+            <option value="60">60</option>
+            <option value="30">30</option>
             <option value="21">21</option>
             <option value="14">14</option>
             <option value="7" selected>7</option>
@@ -75,47 +76,46 @@
                 for (let j = 0; j < numeroGraficos; j++) {
                     const start = j * 8;
                     const end = start + 8;
-                    const subsetDatasets = datasets.slice(start, end);
-                    //console.log('Generando gráfico', j+1, 'con datasets desde', start, 'hasta', end-1);
+                    const subsetDatasets = datasets.slice(start, end);                    
                     crearChart(subsetDatasets, colors_8, 'chartNivelToner' + j, 'Fecha', 'Impresiones');
                 }
 
             </script>
 
 
-    <script>
+            <script>
 
-        const urlActual = window.location.href;
-        const match = urlActual.match(/\/(\d+)$/);
+                const urlActual = window.location.href;
+                const match = urlActual.match(/\/(\d+)$/);
 
-        if (match) {
-            // match[1] contiene el número capturado (ej: "120")
-            const valorDesdeURL = match[1];
+                if (match) {
+                    // match[1] contiene el número capturado (ej: "120")
+                    const valorDesdeURL = match[1];
 
-            // 4. Obtener una referencia al elemento select
-            const selectElement = document.getElementById('numDias');
+                    // 4. Obtener una referencia al elemento select
+                    const selectElement = document.getElementById('numDias');
 
-            // 5. Establecer el valor del select para que coincida con el valor de la URL
-            // Esto automáticamente selecciona la opción correspondiente.
-            selectElement.value = valorDesdeURL;
-        }
+                    // 5. Establecer el valor del select para que coincida con el valor de la URL
+                    // Esto automáticamente selecciona la opción correspondiente.
+                    selectElement.value = valorDesdeURL;
+                }
 
 
-        // 1. Obtener una referencia al elemento select por su ID
-        const selectElement = document.getElementById('numDias');
+                // 1. Obtener una referencia al elemento select por su ID
+                const selectElement = document.getElementById('numDias');
 
-        // 2. Definir la base de la URL
-        const baseUrl = `http://${window.location.hostname}:${window.location.port}/chart/`;
+                // 2. Definir la base de la URL
+                const baseUrl = `http://${window.location.hostname}:${window.location.port}/chart/`;
 
-        // 3. Añadir el event listener para el evento 'change'
-        selectElement.addEventListener('change', function () {
+                // 3. Añadir el event listener para el evento 'change'
+                selectElement.addEventListener('change', function () {
 
-            const valorSeleccionado = this.value;
+                    const valorSeleccionado = this.value;
 
-            // Redirigir la ventana a la URL construida
-            window.location.href = baseUrl + valorSeleccionado;
-        });  
-    </script>
+                    // Redirigir la ventana a la URL construida
+                    window.location.href = baseUrl + valorSeleccionado;
+                });  
+            </script>
 
 
             <!-- Bootstrap JS , OJO  tiene que ir antes de 'Inicializa todos los tooltips'-->

@@ -34,6 +34,12 @@ export class IpModel {
     return listadoIps;
   }
 
+  static fingAllIpsDateNumber(n:number): InterfaceIp[] {
+    let listadoIps: InterfaceIp[] = [];
+    listadoIps = db.prepare("SELECT * FROM registros WHERE fecha BETWEEN DATE('now', ?' days') AND DATE('now') ORDER BY fecha DESC ;").all(n) as InterfaceIp[];
+    return listadoIps;
+  }
+
   static findByIp(ip: string): InterfaceIp | undefined {
     return db.prepare("SELECT * FROM ips WHERE ip = ?").get(ip) as InterfaceIp | undefined;
   }

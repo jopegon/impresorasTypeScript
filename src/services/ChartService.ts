@@ -1,7 +1,7 @@
 import { InterfaceIp } from "../models/IpInterface";
 import { IpModel } from "../models/IpModel";
 import { RegistroInterface } from "../models/RegistroInterface";
-import { RegistroModel } from "../models/RegistroService";
+import { RegistroService as RegistroService } from "../models/RegistroService";
 
 
 export class ChartService {
@@ -62,12 +62,9 @@ export class ChartService {
    * formatted for charting, using the most recent 'numRegistros' records.
    * Each dataset contains date and impression count values.
    */
-  static getDataForIPChart(ip: string, numRegistros: number): Array<{
-    label: string;
-    data: Array<{ x: string, y: number }>;
-  }> {
+  static getDataForIPChart(ip: string, numRegistros: number): Array<{label: string;data: Array<{ x: string, y: number }>}> {
 
-    let datosPorIP = new Array<{ label: string, data: Array<{ x: string, y: number }> }>();
+    let datosPorIP:Array<{ label: string, data: Array <{ x: string, y: number }> }> = new Array<{ label: string, data: Array<{ x: string, y: number }> }>();
 
     const ipData = IpModel.findByIp(ip);
 
@@ -78,15 +75,15 @@ export class ChartService {
       datosPorIP.push({ label: ipLabel, data: [] });
 
       // Los registros ya estan ordenados por fecha descendente
-      let registros: RegistroInterface[] | undefined = RegistroModel.findByIp(ip, numRegistros);
+      //let registros: RegistroInterface[] | undefined = RegistroService.findByIp(ip, numRegistros);
 
+      let registros: RegistroInterface[] | undefined = RegistroService.findByIpNdays(ip, numRegistros);
+      
       if (!registros) {
         return datosPorIP;
       }
-
       // Invierto el orden para tenerlos de más antiguo a más reciente
       registros = registros.reverse();
-
 
       /* Normalizo los contadores rellenando los ceros con el último valor conocido
       *  Esto es necesario para que el cálculo de impresiones diarias sea correcto
@@ -99,12 +96,14 @@ export class ChartService {
       registros.shift() // Elimino el primer registro que no tiene valor real
 
 
+
       for (let registro of registros) {
         datosPorIP[0].data.push({
           x: registro.fecha,
           y: registro.contador
         });
       };
+
     }
     return datosPorIP;
   }
@@ -138,7 +137,7 @@ export class ChartService {
       );
 
       // Los registros ya estan ordenados por fecha descendente
-      let registros = RegistroModel.findByIp(ip, numRegistros);
+      let registros = RegistroService.findByIpNdays(ip, numRegistros);
 
       if (!registros) {
         return [];
@@ -178,7 +177,7 @@ export class ChartService {
     const listaIps: InterfaceIp[] = IpModel.findAllIPs();
 
     // Agrupar por IP
-    const datosPorIP = new Array<{ label: string; data: Array<{ x: string, y: number }> }>();
+    const datosPorIP:Array<{ label: string; data: Array<{ x: string, y: number }> }> = new Array<{ label: string; data: Array<{ x: string, y: number }> }>();
 
     for (let ip of listaIps) {
       datosPorIP.push(ChartService.getDataForIPChart(ip.ip, numeroDeRegistros)[0]);

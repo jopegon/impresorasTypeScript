@@ -2,7 +2,7 @@ import { Impresora } from "../clases/Impresora";
 import { ConsultaImpresora } from "./ConsultaImpresora";
 import { RegistroInterface } from "../models/RegistroInterface";
 import { IpModel } from "../models/IpModel";
-import { RegistroModel } from "../models/RegistroService";
+import { RegistroService } from "../models/RegistroService";
 
 
 export class CapturaService {
@@ -24,7 +24,7 @@ export class CapturaService {
 
                 if (grabarSoloConectadas) {
                     if (resultado.conectada) {
-                        RegistroModel.insertUpdateRegistro(resultado);
+                        RegistroService.insertUpdateRegistro(resultado);
                     }
                 }
 
