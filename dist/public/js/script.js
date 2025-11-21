@@ -129,8 +129,12 @@ const filtra = () => {
         elemento.classList.add("d-none")
 
         let correcto=true; 
-        listaCondiciones.map((value)=>{
-            if (!elemento.outerHTML.includes(value)){
+        listaCondiciones.map((value,index)=>{
+            if (index==0){
+                if (!elemento.getElementsByTagName('a')[0].outerHTML.includes(value)){
+                    correcto=false;
+                }
+            }else if (!elemento.outerHTML.includes(value)){
                 correcto=false;
             }
         });
@@ -138,16 +142,6 @@ const filtra = () => {
             elemento.classList.remove("d-none")
             ++contador;            
         }
-/*   En cuarentena
-        if (elemento.outerHTML.includes(listaCondiciones[0]) && elemento.outerHTML.includes(listaCondiciones[1]) && elemento.outerHTML.includes(listaCondiciones[2])
-            && elemento.outerHTML.includes(listaCondiciones[3])) {
-            //elemento.style.display = "";
-            elemento.classList.remove("d-none")
-            ++contador;
-        }*/
     });
    document.getElementById("elementosListados").innerHTML= `Número de impresoras ${contador}`;
 }
-
-
-//setInterval("location.reload()",300000);
