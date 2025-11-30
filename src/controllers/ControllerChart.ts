@@ -1,8 +1,8 @@
 
 import { Request, Response } from 'express';
 import { ChartService } from '../services/ChartService';
-import { IpModel } from '../models/IpModel';
-import { RegistroService } from '../models/RegistroService';
+import { IpRepository } from '../repositories/IpRepository';
+import { RegistroRepository } from '../repositories/RegistroRepository';
 
 
 
@@ -40,9 +40,9 @@ export class ControlerChart {
 
       const numRegistros:number = Number.parseInt(nRegistros, 10);
 
-      const ipData = IpModel.findByIp(ip);
+      const ipData = IpRepository.findByIp(ip);
 
-      const lastRecord = RegistroService.getLastRecordConectedByIp(ip);
+      const lastRecord = RegistroRepository.getLastRecordConectedByIp(ip);
 
       const datasets = ChartService.getDataForIPChart(ip, numRegistros);
 
@@ -62,7 +62,7 @@ export class ControlerChart {
 
       impresionMedia = impresionesTotales / numeroRegistros;
 
-      const disponibility = RegistroService.getDisponibilityRangeByIp(ip, numRegistros);
+      const disponibility = RegistroRepository.getDisponibilityRangeByIp(ip, numRegistros);
 
       res.render('chart', {
         title: `Última conexión ${lastRecord?.fecha} ${lastRecord?.hora}`,

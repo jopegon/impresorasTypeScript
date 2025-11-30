@@ -6,6 +6,7 @@ import path from "node:path";
 import routerRegistro from "../routes/routerApiRegistros";
 import os from "node:os";
 import routerChart from "../routes/routerChart";
+import routerIps from "../routes/routerIps";
 import favicon from 'serve-favicon';
 
 
@@ -117,7 +118,7 @@ export class Server {
         this.app.use('', routerImpresoras);
         this.app.use('/records', routerRegistro);
         this.app.use('/chart', routerChart);
-        //this.app.use('/ips', routesIp);
+        this.app.use('/ips', routerIps);
         //this.app.use('/id', routesJwt)
         //this.app.use('/api/users', routesUser);
     }

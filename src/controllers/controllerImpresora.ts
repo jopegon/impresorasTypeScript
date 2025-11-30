@@ -4,7 +4,7 @@ import { CadenaHtml } from "./CadenaHtmlTabla";
 import { CadenasVistaImpresoras } from "./CadenasVistaImpresoras";
 import { ConsultaImpresora } from "../services/ConsultaImpresora";
 import { Request, RequestHandler, Response } from 'express';
-import { IpModel } from "../models/IpModel";
+import { IpRepository } from "../repositories/IpRepository";
 
 
 export const saluda = async (req: Request, res: Response) => {
@@ -25,7 +25,7 @@ export const leeDB = async (req: Request, res: Response) => {
         let impresoras: Impresora[] = [];
         let promesas: Promise<void>[] = [];
 
-        impresoras = IpModel.findAllPrinters() || [];
+        impresoras = IpRepository.findAllPrinters() || [];
 
         promesas = impresoras.map((impresora: Impresora) => {
             const pp = new ConsultaImpresora(impresora);
@@ -64,7 +64,7 @@ export const muestraInfo = async (request: Request, response: Response) => {
 
     //promesas = leer.getListaImpresoras().map(async (impresora: Impresora) => {
 
-    promesas = IpModel.findAllPrinters().map(async (impresora: Impresora) => {
+    promesas = IpRepository.findAllPrinters().map(async (impresora: Impresora) => {
 
         pp = new ConsultaImpresora(impresora);
 
@@ -107,7 +107,7 @@ export const lista = async (request: Request, response: Response) => {
     response.write(cadenasHtml.getEncabezado());
 
 
-    promesas = IpModel.findAllPrinters().map(async (impresora: Impresora) => {
+    promesas = IpRepository.findAllPrinters().map(async (impresora: Impresora) => {
 
         //promesas = leer.getListaImpresoras().map(async (impresora: Impresora) => {
 

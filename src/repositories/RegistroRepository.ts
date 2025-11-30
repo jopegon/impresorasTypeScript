@@ -3,7 +3,7 @@ import db from "../config/db";
 import { RegistroInterface } from "../models/RegistroInterface";
 
 
-export class RegistroService {
+export class RegistroRepository {
 
   static create(ip: string, localizacion: string, observaciones?: string) {
     const stmt = db.prepare(`
@@ -80,23 +80,17 @@ export class RegistroService {
     return db.prepare("SELECT * FROM registros").all() as RegistroInterface[];
   }
 
-  static findAllRecords(): RegistroInterface[] {
-    let resultadoConsulta: RegistroInterface[] = [];
-    let registros: RegistroInterface[] = [];
-    resultadoConsulta = db.prepare("SELECT * FROM registros").all() as RegistroInterface[];
 
-    for (let resultado of resultadoConsulta) {
-      registros.push(resultado);
-    }
-    return registros;
+  static getLastNRecordsByIp(ip: string, num: number): RegistroInterface[] | undefined {
+    return db.prepare('SELECT * FROM registros WHERE ip=? ORDER  BY fecha DESC LIMIT ?;').all(ip, num) as RegistroInterface[] | undefined;
   }
 
-  static findByIp(ip: string, numRegistros: number): RegistroInterface[] | undefined {
-    numRegistros += 1;
-    return db.prepare("SELECT * FROM registros WHERE ip = ? ORDER  BY fecha DESC LIMIT ?").all(ip, numRegistros) as RegistroInterface[] | undefined;
+
+  static getRecordsByIp(ip: string): RegistroInterface[] | undefined {
+    return db.prepare("SELECT * FROM registros WHERE ip = ? ORDER  BY fecha DESC ").all(ip) as RegistroInterface[] | undefined;
   }
 
-  static findByIpNdays(ip: string, numRegistros: number): RegistroInterface[] | undefined {
+  static getRecordsByIpNdays(ip: string, numRegistros: number): RegistroInterface[] | undefined {
     return db.prepare("SELECT * FROM registros WHERE ip=? AND fecha BETWEEN DATE('now', '-' || ? || ' days') AND DATE('now') ORDER  BY fecha DESC;").all(ip, numRegistros) as RegistroInterface[] | undefined;
   }
 
@@ -115,7 +109,6 @@ export class RegistroService {
   }
 
 
-
   static countRecordsRangeByIp(ip: string, range: number): number {
     const result = db.prepare("SELECT COUNT(*) as count FROM " +
       "(SELECT * FROM registros WHERE ip = ? ORDER BY id DESC LIMIT ?) AS ultimos_registros;").get(ip, range) as { count: number } | undefined;
@@ -124,8 +117,6 @@ export class RegistroService {
     }
     return result.count;
   }
-
-
 
 
   static countRecordsByIpConectedRange(ip: string, range: number, conected: number): number {
@@ -147,6 +138,14 @@ export class RegistroService {
     const connectedRecords = this.countRecordsByIpConectedRange(ip, range, 1);
 
     return (connectedRecords / totalRecords) * 100;
+  }
+
+  static getBetweenDatesRecords(date1: string, date2: string): RegistroInterface[] | undefined {
+    return db.prepare('SELECT * FROM registros WHERE fecha BETWEEN ? AND ? ORDER BY fecha DESC').all(date1, date2) as RegistroInterface[] | undefined;
+  }
+
+  static getBetweenDatesRecordsByIp(ip: string, date1: string, date2: string): RegistroInterface[] | undefined {
+    return db.prepare('SELECT * FROM registros WHERE ip = ? AND fecha BETWEEN ? AND ? ORDER BY fecha DESC').all(ip, date1, date2) as RegistroInterface[] | undefined;
   }
 
 }

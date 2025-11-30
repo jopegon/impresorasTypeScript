@@ -1,7 +1,7 @@
 import { InterfaceIp } from "../models/IpInterface";
-import { IpModel } from "../models/IpModel";
+import { IpRepository } from "../repositories/IpRepository";
 import { RegistroInterface } from "../models/RegistroInterface";
-import { RegistroService as RegistroService } from "../models/RegistroService";
+import { RegistroRepository as RegistroRepository } from "../repositories/RegistroRepository";
 
 
 export class ChartService {
@@ -66,7 +66,7 @@ export class ChartService {
 
     let datosPorIP:Array<{ label: string, data: Array <{ x: string, y: number }> }> = new Array<{ label: string, data: Array<{ x: string, y: number }> }>();
 
-    const ipData = IpModel.findByIp(ip);
+    const ipData = IpRepository.findByIp(ip);
 
     let ipLabel = `${ip} ${ipData?.localizacion}`;
 
@@ -77,7 +77,7 @@ export class ChartService {
       // Los registros ya estan ordenados por fecha descendente
       //let registros: RegistroInterface[] | undefined = RegistroService.findByIp(ip, numRegistros);
 
-      let registros: RegistroInterface[] | undefined = RegistroService.findByIpNdays(ip, numRegistros);
+      let registros: RegistroInterface[] | undefined = RegistroRepository.getRecordsByIpNdays(ip, numRegistros);
       
       if (!registros) {
         return datosPorIP;
@@ -126,7 +126,7 @@ export class ChartService {
       }>
     }>;
 
-    const ipData = IpModel.findByIp(ip);
+    const ipData = IpRepository.findByIp(ip);
 
     if (ipData) {
       porcentajeTonerPorIP.push(
@@ -137,7 +137,7 @@ export class ChartService {
       );
 
       // Los registros ya estan ordenados por fecha descendente
-      let registros = RegistroService.findByIpNdays(ip, numRegistros);
+      let registros = RegistroRepository.getRecordsByIpNdays(ip, numRegistros);
 
       if (!registros) {
         return [];
@@ -174,7 +174,7 @@ export class ChartService {
 
   // Método para obtener datos agrupados por IP para el gráfico
   static getDataForChart(numeroDeRegistros: number): Array<{ label: string; data: Array<{ x: string, y: number }> }> {
-    const listaIps: InterfaceIp[] = IpModel.findAllIPs();
+    const listaIps: InterfaceIp[] = IpRepository.findAllIPs();
 
     // Agrupar por IP
     const datosPorIP:Array<{ label: string; data: Array<{ x: string, y: number }> }> = new Array<{ label: string; data: Array<{ x: string, y: number }> }>();

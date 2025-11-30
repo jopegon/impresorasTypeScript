@@ -1,5 +1,5 @@
 import { Router} from 'express';
-import { ControlerChart } from '../controler/controlerChart';
+import { ControlerChart } from '../controllers/ControllerChart';
 
 
 

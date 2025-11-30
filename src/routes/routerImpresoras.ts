@@ -1,6 +1,6 @@
 import { Router} from 'express';
 
-import { contador, contadores, leeDB, lista, muestraInfo, paginaInicio, saluda } from '../controler/controlerImpresora';
+import { contador, contadores, leeDB, lista, muestraInfo, paginaInicio, saluda } from '../controllers/controllerImpresora';
 
 
 const routerImpresoras = Router();

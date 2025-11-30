@@ -1,6 +1,6 @@
 import { Impresora } from "../clases/Impresora";
-import { IpModel } from "../models/IpModel";
-import { RegistroService } from "../models/RegistroService";
+import { IpRepository } from "../repositories/IpRepository";
+import { RegistroRepository } from "../repositories/RegistroRepository";
 import { CapturaService } from "../services/CapturaService";
 import { ConsultaImpresora } from "../services/ConsultaImpresora";
 
@@ -16,7 +16,7 @@ const consultaIP = async (ip: string) => {
 
 const registraTodasIpsConectadas = () => {
     let listaImpresorasVacias: Impresora[];
-    listaImpresorasVacias = IpModel.findAllPrinters() ?? [];
+    listaImpresorasVacias = IpRepository.findAllPrinters() ?? [];
     for (let impresoraVacia of listaImpresorasVacias){
         let captura: ConsultaImpresora = new ConsultaImpresora(impresoraVacia);
         captura.setTimeout(5000);
@@ -26,7 +26,7 @@ const registraTodasIpsConectadas = () => {
             let resultado = CapturaService.printerToInterfaceRegistro(printer);
 
             if (resultado.conectada) {
-                RegistroService.insertUpdateRegistro(resultado);
+                RegistroRepository.insertUpdateRegistro(resultado);
             }
         });        
     }
@@ -35,7 +35,7 @@ const registraTodasIpsConectadas = () => {
 
 const registraTodasIps = () => {
     let listaImpresorasVacias: Impresora[];
-    listaImpresorasVacias = IpModel.findAllPrinters() ?? [];
+    listaImpresorasVacias = IpRepository.findAllPrinters() ?? [];
 
     for (let impresoraVacia of listaImpresorasVacias){
         let captura = new ConsultaImpresora(impresoraVacia);
@@ -43,7 +43,7 @@ const registraTodasIps = () => {
         captura.setRetries(3);
         captura.obtenerDatosImpresora().then((printer: Impresora) => {
             let resultado = CapturaService.printerToInterfaceRegistro(printer);
-            RegistroService.insertUpdateRegistro(resultado);
+            RegistroRepository.insertUpdateRegistro(resultado);
         });
     };
 };

@@ -166,7 +166,7 @@ export class ConsultaImpresora {
       await this.etapaNivelesColor(); // Ejecuta la etapa de datos color
 
     } catch (error) {
-      console.warn('No se pudo conectar con la impresora etapa ObtenerDatosImpresora:', error.message);
+      //console.warn('No se pudo conectar con la impresora etapa ObtenerDatosImpresora:', error.message);
       /*
       * Es la manera de detectar impresora desconectada 
         por defecto la clase impresora el valor conectada 

@@ -1,10 +1,10 @@
 import { Impresora } from "../clases/Impresora";
 import db from "../config/db";
-import { InterfaceIp } from "./IpInterface";
+import { InterfaceIp } from "../models/IpInterface";
 
 
 
-export class IpModel {
+export class IpRepository {
 
   static create(ip: string, localizacion: string, observaciones?: string) {
     const stmt = db.prepare(`
@@ -47,5 +47,14 @@ export class IpModel {
   static delete(id: number) {
     return db.prepare("DELETE FROM ips WHERE id = ?").run(id);
   }
+
+  static update(id: number, ip: string, localizacion: string, observaciones?: string) {
+    const stmt = db.prepare(`
+      UPDATE ips
+      SET ip = ?, localizacion = ?, observaciones = ?
+      WHERE id = ?
+    `);
+    return stmt.run(ip, localizacion, observaciones || null, id);
+  } 
 }
 

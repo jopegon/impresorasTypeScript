@@ -1,8 +1,8 @@
 import { Impresora } from "../clases/Impresora";
 import { ConsultaImpresora } from "./ConsultaImpresora";
 import { RegistroInterface } from "../models/RegistroInterface";
-import { IpModel } from "../models/IpModel";
-import { RegistroService } from "../models/RegistroService";
+import { IpRepository } from "../repositories/IpRepository";
+import { RegistroRepository } from "../repositories/RegistroRepository";
 
 
 export class CapturaService {
@@ -13,7 +13,7 @@ export class CapturaService {
     */
     static registrarIps(grabarSoloConectadas: boolean) {
         let listaImpresoras: Impresora[];
-        listaImpresoras = IpModel.findAllPrinters() ?? [];
+        listaImpresoras = IpRepository.findAllPrinters() ?? [];
         for (let impresora of listaImpresoras){
             let captura = new ConsultaImpresora(impresora);
             captura.setTimeout(2000)
@@ -24,7 +24,7 @@ export class CapturaService {
 
                 if (grabarSoloConectadas) {
                     if (resultado.conectada) {
-                        RegistroService.insertUpdateRegistro(resultado);
+                        RegistroRepository.insertUpdateRegistro(resultado);
                     }
                 }
 
