@@ -7,8 +7,8 @@ import { ClassControllerIp } from '../controllers/ControllerIp';
     routerIps.get('/listaIps', ClassControllerIp.allIps);
     //routerIp.get('/getIp/:id', getIp);
     //routerIp.post('/addIp',addIp);
-    //routerIp.delete('/deleteIp/:id', deleteIp);
-    //routerIp.put('/updateIp/:id',updateIp);
+    routerIps.delete('/deleteIp/:id', ClassControllerIp.deleteIp);
+    routerIps.post('/updateIp',ClassControllerIp.updateIp);
 
 
 export default routerIps

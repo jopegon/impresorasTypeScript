@@ -46,7 +46,7 @@
                         <tr>
 
                             <td>
-                                <%= ip.ip %>
+                                <a href="http://<%= ip.ip %>" target="_blank"><%= ip.ip %></a>
                             </td>
                             <td>
                                 <%= ip.localizacion %>
@@ -64,7 +64,7 @@
                             </td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#editModal" data-ip="<%= ip.id %>"
+                                    data-bs-target="#deleteModal" data-ip="<%= ip.ip %>" data-ip_id="<%= ip.id %>"
                                     data-localizacion="<%= ip.localizacion %>"
                                     data-observaciones="<%= ip.observaciones %>">
                                     <i class="bi bi-trash"></i>
@@ -77,6 +77,44 @@
         </div>
     </div>
 
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Borrar Ip</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="deleteForm" action="http://<%= ipSeverPort %>/ips/deleteIp" method="POST">
+
+                    <div class="modal-body">
+                        <input type="hidden" class="form-control" id="inputId" name="idIp">
+
+                        <div class="mb-3">
+                            <label for="inputIp" class="col-form-label">Ip</label>
+                            <input type="text" class="form-control"  placeholder="0.0.0.0" maxlength="15" id="inputIp" name="direccionIp" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Localización</label>
+                            <input type="text" class="form-control" id="message-text" name="localizacionIp" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Observaciones" class="col-form-label">Observaciones</label>
+                            <textarea class="form-control" id="Observaciones" name="observacionesIp"
+                                readonly></textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer justify-content-center">
+                        <button type="submit" class="btn btn-danger">Borrar</button>
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
         style="display: none;">
         <div class="modal-dialog">
@@ -85,28 +123,32 @@
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Edición de Ip</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form>
+                <form action="http://<%= ipSeverPort %>/ips/updateIp" method="POST">
+
+                    <div class="modal-body">
+
+                        <input type="hidden" class="form-control" id="inputId" name="idIp">
+
                         <div class="mb-3">
                             <label for="recipient-name" class="col-form-label">Ip</label>
-                            <input type="text" class="form-control" id="recipient-name">
+                            <input type="text" class="form-control" id="inputIp" name="direccionIp">
                         </div>
                         <div class="mb-3">
                             <label for="message-text" class="col-form-label">Localización</label>
-                            <textarea class="form-control" id="message-text"></textarea>
+                            <input type="text" class="form-control" id="message-text" name="localizacionIp">
                         </div>
                         <div class="mb-3">
-                            <label for="message-text" class="col-form-label">Observaciones</label>
-                            <textarea class="form-control" id="Observaciones"></textarea>
+                            <label for="Observaciones" class="col-form-label">Observaciones</label>
+                            <textarea class="form-control" id="Observaciones" name="observacionesIp"></textarea>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success"
-                        onclick="alert('voy a guardar el registro')">Guardar</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
 
-                </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
@@ -115,27 +157,102 @@
 
 </body>
 <script>
+    const ipPuerto='192.168.1.134:3050';
     const editModal = document.getElementById('editModal');
+
 
     editModal.addEventListener('show.bs.modal', event => {
         // Botón que disparó el modal
         const button = event.relatedTarget;
 
         // Obtener los valores de los atributos data-*
+        const id = button.getAttribute('data-ip_id');
         const ip = button.getAttribute('data-ip');
         const localizacion = button.getAttribute('data-localizacion');
         const observaciones = button.getAttribute('data-observaciones');
 
         // Inputs del modal
-        const inputIp = editModal.querySelector('#recipient-name');
+        const inputId = editModal.querySelector('#inputId');
+        const inputIp = editModal.querySelector('#inputIp');
         const inputLocalizacion = editModal.querySelector('#message-text');
         const inputObservaciones = editModal.querySelector('#Observaciones');
 
         // Asignar valores
         inputIp.value = ip;
+        inputId.value = id;
         inputLocalizacion.value = localizacion;
         inputObservaciones.value = observaciones;
     });
+
+    const deleteModal = document.getElementById('deleteModal');
+
+
+    deleteModal.addEventListener('show.bs.modal', event => {
+        // Botón que disparó el modal
+        const button = event.relatedTarget;
+
+        // Obtener los valores de los atributos data-*
+        const id = button.getAttribute('data-ip_id');
+        const ip = button.getAttribute('data-ip');
+        const localizacion = button.getAttribute('data-localizacion');
+        const observaciones = button.getAttribute('data-observaciones');
+
+        // Inputs del modal
+        const inputId = deleteModal.querySelector('#inputId');
+        const inputIp = deleteModal.querySelector('#inputIp');
+        const inputLocalizacion = deleteModal.querySelector('#message-text');
+        const inputObservaciones = deleteModal.querySelector('#Observaciones');
+
+        // Asignar valores
+        inputIp.value = ip;
+        inputId.value = id;
+        inputLocalizacion.value = localizacion;
+        inputObservaciones.value = observaciones;
+    });
+const deleteForm = document.getElementById('deleteForm');
+
+    if (deleteForm) {
+        deleteForm.addEventListener('submit', async function(event) {
+            // Evita que el formulario se envíe de la manera tradicional (POST)
+            event.preventDefault(); 
+            
+            // 1. Obtener el ID del campo oculto
+            const idRegistro = document.getElementById('inputId').value;
+            
+            if (!idRegistro) {
+                console.error("No se encontró el ID del registro para borrar.");
+                return;
+            }
+
+
+            const url = `http://${ipPuerto}/ips/deleteIp/${idRegistro}`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'DELETE', // <-- ¡Esto es lo que hace la magia!
+                    headers: {
+                        'Content-Type': 'application/json' 
+                    }
+                    // No enviamos un cuerpo si el ID va en la URL
+                });
+
+                if (response.ok) {
+                    window.location.href = '/ips/listaIps'; 
+                } else {
+                    // Manejo de error si el servidor falla
+                    const errorData = await response.json();
+                    alert(`Error al borrar: ${errorData.message || 'Error desconocido'}`);
+                }
+
+            } catch (error) {
+                console.error('Fallo en la conexión:', error);
+                alert('Fallo en la conexión con el servidor.');
+            }
+        });
+    }
+
+
+
 </script>
 
 </html>

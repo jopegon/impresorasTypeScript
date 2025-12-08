@@ -5,11 +5,11 @@ import { Server } from "./server/server";
 console.log(`Iniciando aplicación impresoras`);
 console.log(``);
 
-export const puerto=3050;
+export const port=3050;
 
-const servidor = new Server(puerto);
+const server = new Server(port);
 
-servidor.listen();
+server.listen();
 
 const recolector = new Recolector();
 

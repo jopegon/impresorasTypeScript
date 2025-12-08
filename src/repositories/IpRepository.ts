@@ -21,7 +21,7 @@ export class IpRepository {
     let impresoras: Impresora[] = [];
     resultadoConsulta = db.prepare("SELECT * FROM ips").all() as InterfaceIp[];
 
-    for (let resultado of resultadoConsulta){
+    for (let resultado of resultadoConsulta) {
       impresoras.push(new Impresora(resultado.ip, resultado.localizacion));
     }
 
@@ -34,7 +34,7 @@ export class IpRepository {
     return listadoIps;
   }
 
-  static fingAllIpsDateNumber(n:number): InterfaceIp[] {
+  static fingAllIpsDateNumber(n: number): InterfaceIp[] {
     let listadoIps: InterfaceIp[] = [];
     listadoIps = db.prepare("SELECT * FROM registros WHERE fecha BETWEEN DATE('now', ?' days') AND DATE('now') ORDER BY fecha DESC ;").all(n) as InterfaceIp[];
     return listadoIps;
@@ -44,17 +44,30 @@ export class IpRepository {
     return db.prepare("SELECT * FROM ips WHERE ip = ?").get(ip) as InterfaceIp | undefined;
   }
 
-  static delete(id: number) {
-    return db.prepare("DELETE FROM ips WHERE id = ?").run(id);
+  static findByIpId(id: number): InterfaceIp | undefined {
+    return db.prepare("SELECT * FROM ips WHERE id = ?").get(id) as InterfaceIp | undefined;
   }
 
-  static update(id: number, ip: string, localizacion: string, observaciones?: string) {
+
+
+  static delete(id: number) {
+    try {
+      const info=db.prepare("DELETE FROM ips WHERE id = ?").run(Number(id));
+      return info;
+    } catch (error) {
+      console.error("Error en DB durante la eliminación:", error);
+      throw error; // En caso de error, devuelve false
+    }
+  }
+
+  static update({ id, ip, localizacion, observaciones }: InterfaceIp) {
     const stmt = db.prepare(`
       UPDATE ips
       SET ip = ?, localizacion = ?, observaciones = ?
       WHERE id = ?
     `);
     return stmt.run(ip, localizacion, observaciones || null, id);
-  } 
+  }
+
 }
 

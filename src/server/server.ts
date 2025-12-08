@@ -1,32 +1,14 @@
 import express, { Application } from "express";
-import bodyParser from "body-parser";
 import cors from "cors";
 import routerImpresoras from "../routes/routerImpresoras";
 import path from "node:path";
 import routerRegistro from "../routes/routerApiRegistros";
-import os from "node:os";
+
 import routerChart from "../routes/routerChart";
 import routerIps from "../routes/routerIps";
 import favicon from 'serve-favicon';
+import { getLocalIP } from "../utilities/utilities";
 
-
-export const getLocalIP = (): string | undefined => {
-    const interfaces = os.networkInterfaces();
-
-    for (const name of Object.keys(interfaces)) {
-        const iface = interfaces[name];
-
-        if (!iface) continue;
-
-        for (const alias of iface) {
-            // Ignorar direcciones internas (ej. 127.0.0.1) y solo IPv4
-            if (alias.family === "IPv4" && !alias.internal) {
-                return alias.address;
-            }
-        }
-    }
-    return undefined;
-};
 
 export class Server {
 
@@ -84,7 +66,7 @@ export class Server {
         this.app.use('/jss', express.static(path.join(process.cwd(), './dist/public/js')));
 
         console.log(__dirname);
-        
+
         this.app.use("/bootstrapCss", express.static(path.join(process.cwd(), "./node_modules/bootstrap/dist/css/")));
         this.app.use("/bootStrapJs", express.static(path.join(process.cwd(), "./node_modules/bootstrap/dist/js/")));
         this.app.use("/bootStrapIcons", express.static(path.join(process.cwd(), "./node_modules/bootstrap-icons/font/")));
@@ -105,13 +87,13 @@ export class Server {
 
 
     private midlewares() {
-
-        // Parseo body
-        this.app.use(bodyParser.json());
-        this.app.use(express.json());
-
         // Cors
         this.app.use(cors());
+
+        // Parseo body
+        this.app.use(express.json());
+        this.app.use(express.urlencoded({ extended: true }));
+
     }
 
     private routes() {
@@ -124,7 +106,7 @@ export class Server {
     }
 
 
-    public getPort():number{
+    public getPort(): number {
         return this.port;
     }
 

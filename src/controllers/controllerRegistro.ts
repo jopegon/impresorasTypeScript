@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
-import { getLocalIP } from '../server/server';
+
 import { RegistroRepository } from '../repositories/RegistroRepository';
-import { isValidIp } from '../utilities/utilities';
-
-
+import {  isValidIp, getAddressWithPort } from '../utilities/utilities';
 
 
 export const getRecordsIp = async (req: Request, res: Response) => {
@@ -98,25 +96,61 @@ export const lastNRecordsOfIp = async (req: Request, res: Response) => {
 export const help = async (req: Request, res: Response) => {
   try {
     const mensajeHelp = `   
-    
-        http://${getLocalIP()}:3000/records/allRecords
+    <!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Nivel tóner</title>   
 
-        http://${getLocalIP()}:3000/records/getRecordsIp/:ip
-        http://${getLocalIP()}:3000/records/betweenDates/:date1/:date2   formato fecha YYYY-MM-DD
-        http://${getLocalIP()}:3000/records/betweenDatesIp/:date1/:date2/:ip
-        http://${getLocalIP()}:3000/records/lastNRecordsOfIp/:ip/:nums
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/bootstrapCss/bootstrap.min.css" />
+
+    <link rel="stylesheet" href="/bootStrapIcons/bootstrap-icons.css" />
+
+    <script src="/bootStrapJs/bootstrap.js"></script> 
     
-        http://${getLocalIP()}:3000/records/contadorIp/:ip
-        http://${getLocalIP()}:3000/records/consultaIp/:ip
+    <link rel="stylesheet" href="/css/vistaImpresoras.css" />
+   
+  </head>
+
+  <body>
+    <div class="container py-4">
+  
+        <a href="${getAddressWithPort()}/records/allRecords"> ${getAddressWithPort()}/records/allRecords</a> <br/>
+
+        http://${getAddressWithPort()}/records/getRecordsIp/:ip <br/>
+
+        http://${getAddressWithPort()}/records/betweenDates/:date1/:date2   formato fecha YYYY-MM-DD <br/>
+
+        http://${getAddressWithPort()}/records/betweenDatesIp/:date1/:date2/:ip <br/>
+
+        http://${getAddressWithPort()}/records/lastNRecordsOfIp/:ip/:nums <br/>
+    
+        http://${getAddressWithPort()}/records/contadorIp/:ip
+
+        http://${getAddressWithPort()}/records/consultaIp/:ip <br/>
+    
+        <a href="${getAddressWithPort()}/ips/listaIps"> ${getAddressWithPort()}/ips/listaIps</a> <br/> 
         
         
-        http://${getLocalIP()}:3000/records/help`;
+        <a href="${getAddressWithPort()}/records/help"> ${getAddressWithPort()}/records/help</a> Esta misma página <br/>
+        
+      </div>
+        </body>
+</html>
+        
+        
+        
+        
+        `;
        
-
+    
 
     // Establecer el Content-Type a text/plain
-    res.setHeader('Content-Type', 'text/plain');
-    res.status(200).send(mensajeHelp);
+    res.setHeader('Content-Type', 'text/html');
+    res.status(200).write(mensajeHelp);
+    res.end();
   } catch (error) {
     console.error('Error al consultar impresoras:', error);
     res.status(500).json({ error: 'Error interno del servidor al consultar impresoras.' });
