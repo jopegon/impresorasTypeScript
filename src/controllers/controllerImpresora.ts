@@ -5,6 +5,7 @@ import { CadenasVistaImpresoras } from "./CadenasVistaImpresoras";
 import { ConsultaImpresora } from "../services/ConsultaImpresora";
 import { Request, RequestHandler, Response } from 'express';
 import { IpRepository } from "../repositories/IpRepository";
+import { getAddressWithPort } from "../server/server";
 
 
 export const saluda = async (req: Request, res: Response) => {
@@ -132,12 +133,12 @@ export const lista = async (request: Request, response: Response) => {
         <td>${impresora.getConectadaSiNo()}</td>
     <td>${impresora.getNegro()} %</td>`);
             if (impresora.getColor()) {
-                response.write(`    <td>${impresora.getCyan()} %</td> <td>${impresora.getAmarillo()} %</td> <td>${impresora.getMagenta()} %</td>  </tr>  `);
+                response.write(`    <td>${impresora.getCyan()} %</td> <td>${impresora.getAmarillo()} %</td> <td>${impresora.getMagenta()} %</td>   `);
             } else {
-                response.write('<td></td> <td></td> <td></td>  </tr> ');
+                response.write('<td></td> <td></td> <td></td>  ');
             }
 
-            response.write('');
+            response.write(`<td> <a href="${getAddressWithPort()}/chart/chartIp/${impresora.getIp()}/30}" target="_blank">esta</a></td></tr>`);
         })
             .catch((impError) => {
                 response.write(`No conecta ${impError.toString()}`);
@@ -166,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 </script>`);
-    response.write(`</table>   <a class="m-2 **ms-auto** **d-block**" target="_blank" rel="noopener noreferrer" href="http://10.41.81.26:3500/records/help">help</a> </body> </html>`);
+    response.write(`</table>   <a class="m-2 **ms-auto** **d-block**" target="_blank" rel="noopener noreferrer" href="http://10.41.81.26:3500/help">help</a> </body> </html>`);
     response.end(); // Termina la respuesta después de completar todas las operaciones  
 };
 

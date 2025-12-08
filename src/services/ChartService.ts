@@ -1,4 +1,4 @@
-import { InterfaceIp } from "../models/IpInterface";
+import { IpInterface } from "../models/IpInterface";
 import { IpRepository } from "../repositories/IpRepository";
 import { RegistroInterface } from "../models/RegistroInterface";
 import { RegistroRepository as RegistroRepository } from "../repositories/RegistroRepository";
@@ -174,7 +174,7 @@ export class ChartService {
 
   // Método para obtener datos agrupados por IP para el gráfico
   static getDataForChart(numeroDeRegistros: number): Array<{ label: string; data: Array<{ x: string, y: number }> }> {
-    const listaIps: InterfaceIp[] = IpRepository.findAllIPs();
+    const listaIps: IpInterface[] = IpRepository.findAllIPs();
 
     // Agrupar por IP
     const datosPorIP:Array<{ label: string; data: Array<{ x: string, y: number }> }> = new Array<{ label: string; data: Array<{ x: string, y: number }> }>();
