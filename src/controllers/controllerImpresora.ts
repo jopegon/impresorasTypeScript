@@ -182,3 +182,39 @@ export const contadores = async (request: Request, response: Response) => {
     const numeroGraficos: number = 3;
     response.render('contadores', { numeroGraficos: numeroGraficos });
 }
+
+export const tablaIps = async (request: Request, response: Response) => {
+    try {
+        let listaImpresoras: Impresora[] = [];
+
+        let consultaImpresora: ConsultaImpresora = new ConsultaImpresora();
+
+        let promesas: Promise<void>[] = [];
+
+
+        promesas = IpRepository.findAllPrinters().map(async (impresora: Impresora) => {
+
+        
+            return new ConsultaImpresora(impresora).obtenerDatosImpresora().then((impExito) => {  
+                listaImpresoras.push(impExito);
+            })
+                .catch((impError) => {
+                    listaImpresoras.push(impresora);
+                });
+
+        });
+        await Promise.all(promesas);
+
+
+
+        response.render('tablaIps', {
+            'title': 'Tabla de IPs de impresoras',
+            listaImpresoras: listaImpresoras
+        });
+    }
+    catch (error) {
+        console.error('Error al cargar datos del gráfico:', error);
+        response.status(500).send('Error al cargar los datos');
+    }
+
+}

@@ -137,6 +137,8 @@ export const help = async (req: Request, res: Response) => {
         <a href="${getAddressWithPort()}/lista" target="_blank" rel="noopener noreferrer"> listado con niveles y paginas impresas <br/> 
         
         <a href="${getAddressWithPort()}/chart" target="_blank" rel="noopener noreferrer">  Gráfico <br/>
+
+        <a href="${getAddressWithPort()}/tablaIps" target="_blank" rel="noopener noreferrer">  Tabla de ips <br/>
         
         <a href="${getAddressWithPort()}" target="_blank" rel="noopener noreferrer">  Volver <br/>
         
