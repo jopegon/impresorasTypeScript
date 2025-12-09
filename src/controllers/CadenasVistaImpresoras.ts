@@ -1,7 +1,5 @@
-import { port } from "..";
 import { Impresora } from "../clases/Impresora";
-import { getLocalIP } from "../utilities/utilities";
-
+import { getAddressWithPort } from "../server/server";
 
 
 export class CadenasVistaImpresoras {
@@ -87,7 +85,7 @@ export class CadenasVistaImpresoras {
       <a class="text-center" href="http://${impresora.getIp()}" target="_blank">${impresora.getIp()}</a>
       <p class="text-center m-2">Sin conexión</p>
       <p class="text-center">${impresora.getLocalizacion()}</p>
-      <a class="text-center" href="http://${getLocalIP()}:${port}/chart/chartIp/${impresora.getIp()}/30" target="_blank"><i class="bi bi-graph-up"></i></a>
+      <a class="text-center" href="${getAddressWithPort()}/chart/chartIp/${impresora.getIp()}/30" target="_blank"><i class="bi bi-graph-up"></i></a>
       
     </div>
     `;
@@ -106,7 +104,7 @@ export class CadenasVistaImpresoras {
         <p class="text-center IdentificadorModelo">${impresora.getModelo()}</p>
         <p class="text-center">${impresora.getLocalizacion()}</p>
         <p class="text-center">Número de serie: ${impresora.getNumeroDeSerie()}</p>
-        <a class="text-center" href="http://${getLocalIP()}:${port}/chart/chartIp/${impresora.getIp()}/30" target="_blank"><i class="bi bi-graph-up"></i></a>
+        <a class="text-center" href="${getAddressWithPort()}/chart/chartIp/${impresora.getIp()}/30" target="_blank"><i class="bi bi-graph-up"></i></a>
         <div class="d-flex justify-content-center bg-highlight">
 
           ${this.getBarraPorcentajeNegro(impresora)}
@@ -175,11 +173,11 @@ export class CadenasVistaImpresoras {
           <option value="impresoraColorfalse">B/N</option>
       </select>
 
-      <a  target="_blank" href="http://${getLocalIP()}:${port}/records/help">__</a>
+      <a  target="_blank" href="${getAddressWithPort()}/help" target="_blank" rel="noopener noreferrer">__</a>
       
       <p class="m-2" id="elementosListados"></p>
 
-      <a class="m-2 text-center" href="http://${getLocalIP()}:${port}/chart/" target="_blank"><i class="bi bi-graph-up"></i></a>
+      <a class="m-2 text-center" href="${getAddressWithPort()}/chart/" target="_blank"><i class="bi bi-graph-up"></i></a>
 
 
     </div>

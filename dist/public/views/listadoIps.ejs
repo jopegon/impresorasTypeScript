@@ -20,6 +20,11 @@
         .table-responsive {
             max-height: 600px;
         }
+
+        /* Opcional: resaltar texto filtrado (simple) */
+        .highlight {
+            background-color: rgba(255, 235, 59, 0.3);
+        }
     </style>
 </head>
 
@@ -29,24 +34,47 @@
             <%= title %>
         </h1>
 
+        <div class="container py-2">
+            <div class="d-flex justify-content-between mb-3 align-items-center">
+                <div>
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modal"
+                        data-action="create">
+                        <i class="bi bi-plus-lg"></i> Nuevo registro
+                    </button>
+                </div>
+
+                <!-- campo de búsqueda -->
+                <div class="d-flex" style="gap:8px; align-items:center;">
+                    <input id="searchInput" class="form-control" type="search"
+                        placeholder="Buscar IP, localización u observaciones" style="min-width:280px;">
+                    <button id="clearSearchBtn" class="btn btn-outline-secondary" title="Limpiar búsqueda"
+                        type="button">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="table-responsive">
-            <table class="table table-striped table-bordered">
+            <table id="ipsTable" class="table table-striped table-bordered">
                 <thead class="table-dark">
                     <tr>
-
                         <th scope="col">Dirección IP</th>
                         <th scope="col">Localización</th>
                         <th scope="col">Observaciones</th>
+                        <th scope="col">Estadística</th>
                         <th scope="col">Editar</th>
                         <th scope="col">Borrar</th>
+
                     </tr>
                 </thead>
                 <tbody>
                     <% ips.forEach(function(ip) { %>
                         <tr>
-
                             <td>
-                                <a href="http://<%= ip.ip %>" target="_blank"><%= ip.ip %></a>
+                                <a href="http://<%= ip.ip %>" target="_blank">
+                                    <%= ip.ip %>
+                                </a>
                             </td>
                             <td>
                                 <%= ip.localizacion %>
@@ -55,17 +83,23 @@
                                 <%= ip.observaciones %>
                             </td>
                             <td class="text-center">
+                                <button type="button" class="btn btn-secondary"
+                                    onclick="window.open('<%=ipSeverPort%>/chart/chartIp/<%= ip.ip %>/30', '_blank');">
+                                    <i class="bi bi-graph-up"></i>
+                                </button>
+                            </td>
+                            <td class="text-center">
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#editModal" data-ip="<%= ip.ip %>" data-ip_id="<%= ip.id %>"
-                                    data-localizacion="<%= ip.localizacion %>"
+                                    data-bs-target="#modal" data-action="edit" data-ip="<%= ip.ip %>"
+                                    data-ip_id="<%= ip.id %>" data-localizacion="<%= ip.localizacion %>"
                                     data-observaciones="<%= ip.observaciones %>">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                             </td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal" data-ip="<%= ip.ip %>" data-ip_id="<%= ip.id %>"
-                                    data-localizacion="<%= ip.localizacion %>"
+                                    data-bs-target="#modal" data-action="delete" data-ip="<%= ip.ip %>"
+                                    data-ip_id="<%= ip.id %>" data-localizacion="<%= ip.localizacion %>"
                                     data-observaciones="<%= ip.observaciones %>">
                                     <i class="bi bi-trash"></i>
                                 </button>
@@ -75,184 +109,368 @@
                 </tbody>
             </table>
         </div>
+        <div class="text-center mt-2">
+            <small id="countDisplay" class="text-muted ms-2">Mostrando 0 de 0 registros</small>
+        </div>
     </div>
 
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
-        style="display: none;">
+
+    <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
+
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Borrar Ip</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h1 class="modal-title fs-5" id="modalTitle">Editar IP</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form id="deleteForm" action="http://<%= ipSeverPort %>/ips/deleteIp" method="POST">
 
-                    <div class="modal-body">
-                        <input type="hidden" class="form-control" id="inputId" name="idIp">
+                <div class="modal-body">
+
+                    <input type="hidden" id="inputId">
+
+                    <div id="formFields">
+                        <div class="mb-3">
+                            <label class="col-form-label">IP</label>
+                            <input type="text" class="form-control" id="inputIp" placeholder="192.168.X.X">
+                        </div>
 
                         <div class="mb-3">
-                            <label for="inputIp" class="col-form-label">Ip</label>
-                            <input type="text" class="form-control"  placeholder="0.0.0.0" maxlength="15" id="inputIp" name="direccionIp" readonly>
+                            <label class="col-form-label">Localización</label>
+                            <input type="text" class="form-control" id="inputLocalizacion"
+                                placeholder="Ej: Sala servidores">
                         </div>
+
                         <div class="mb-3">
-                            <label for="message-text" class="col-form-label">Localización</label>
-                            <input type="text" class="form-control" id="message-text" name="localizacionIp" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="Observaciones" class="col-form-label">Observaciones</label>
-                            <textarea class="form-control" id="Observaciones" name="observacionesIp"
-                                readonly></textarea>
+                            <label class="col-form-label">Observaciones</label>
+                            <textarea class="form-control" id="inputObservaciones" placeholder="Notas..."></textarea>
                         </div>
                     </div>
 
-                    <div class="modal-footer justify-content-center">
-                        <button type="submit" class="btn btn-danger">Borrar</button>
-                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Cancelar</button>
-                    </div>
+                    <!-- Mensaje solo para borrar -->
+                    <p id="deleteMessage" class="text-danger fw-bold" style="display:none;">
+                        ¿Seguro que deseas borrar la IP <span id="deleteIpText"></span>?
+                    </p>
 
-                </form>
+                    <!-- Mensaje general de error/feedback -->
+                    <div id="modalAlert" class="alert alert-danger" role="alert" style="display:none;"></div>
+
+                </div>
+
+                <div class="modal-footer justify-content-center">
+
+                    <!-- Botón guardar (create/edit) -->
+                    <button type="button" id="saveBtn" class="btn btn-success">Guardar</button>
+
+                    <!-- Botón borrar (solo eliminar) -->
+                    <button type="button" id="confirmDeleteBtn" class="btn btn-danger" style="display:none;">
+                        Borrar
+                    </button>
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
-        style="display: none;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edición de Ip</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="http://<%= ipSeverPort %>/ips/updateIp" method="POST">
-
-                    <div class="modal-body">
-
-                        <input type="hidden" class="form-control" id="inputId" name="idIp">
-
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Ip</label>
-                            <input type="text" class="form-control" id="inputIp" name="direccionIp">
-                        </div>
-                        <div class="mb-3">
-                            <label for="message-text" class="col-form-label">Localización</label>
-                            <input type="text" class="form-control" id="message-text" name="localizacionIp">
-                        </div>
-                        <div class="mb-3">
-                            <label for="Observaciones" class="col-form-label">Observaciones</label>
-                            <textarea class="form-control" id="Observaciones" name="observacionesIp"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer justify-content-center">
-                        <button type="submit" class="btn btn-success">Guardar</button>
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                    </div>
-
-                </form>
-            </div>
-        </div>
-    </div>
 
 
 
 </body>
 <script>
-    const ipPuerto='192.168.1.134:3050';
-    const editModal = document.getElementById('editModal');
+    /* CONFIG */
+    const ipPuerto = '<%= ipSeverPort %>';
+
+    const ENDPOINTS = {
+        create: `${ipPuerto}/ips/createIp`,   // POST JSON
+        update: `${ipPuerto}/ips/updateIp`,   // POST JSON (o PUT según tu backend)
+        deleteBase: `${ipPuerto}/ips/deleteIp`// DELETE a /deleteIp/:id
+    };
+
+    const modalEl = document.getElementById('modal');
+    const modalTitle = document.getElementById('modalTitle');
+
+    const inputId = document.getElementById('inputId');
+    const inputIp = document.getElementById('inputIp');
+    const inputLocalizacion = document.getElementById('inputLocalizacion');
+    const inputObservaciones = document.getElementById('inputObservaciones');
+
+    const formFields = document.getElementById('formFields');
+    const deleteMessage = document.getElementById('deleteMessage');
+    const deleteIpText = document.getElementById('deleteIpText');
+
+    const modalAlert = document.getElementById('modalAlert');
+
+    const saveBtn = document.getElementById('saveBtn');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
 
-    editModal.addEventListener('show.bs.modal', event => {
-        // Botón que disparó el modal
-        const button = event.relatedTarget;
+    let currentAction = 'edit'; // 'create' | 'edit' | 'delete'
 
-        // Obtener los valores de los atributos data-*
-        const id = button.getAttribute('data-ip_id');
-        const ip = button.getAttribute('data-ip');
-        const localizacion = button.getAttribute('data-localizacion');
-        const observaciones = button.getAttribute('data-observaciones');
-
-        // Inputs del modal
-        const inputId = editModal.querySelector('#inputId');
-        const inputIp = editModal.querySelector('#inputIp');
-        const inputLocalizacion = editModal.querySelector('#message-text');
-        const inputObservaciones = editModal.querySelector('#Observaciones');
-
-        // Asignar valores
-        inputIp.value = ip;
+    /* Helpers */
+    function showAlert(msg) {
+        modalAlert.textContent = msg;
+        modalAlert.style.display = 'block';
+    }
+    function hideAlert() {
+        modalAlert.style.display = 'none';
+    }
+    function resetFields() {
+        inputId.value = '';
+        inputIp.value = '';
+        inputLocalizacion.value = '';
+        inputObservaciones.value = '';
+        hideAlert();
+    }
+    function setFields({ id = '', ip = '', localizacion = '', observaciones = '' }) {
         inputId.value = id;
+        inputIp.value = ip;
         inputLocalizacion.value = localizacion;
         inputObservaciones.value = observaciones;
+    }
+
+    function isValidIp(ip) {
+        const ipPart = '(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])';
+        const ipRegex = new RegExp(`^${ipPart}(\\.${ipPart}){3}$`);
+        return ipRegex.test(ip);
+    };
+
+
+    /* Validación mínima */
+    function validateInputs() {
+        if (!inputIp.value.trim()) { showAlert('La IP es obligatoria.'); return false; }
+        if (!isValidIp(inputIp.value.trim())) { showAlert('La IP no es válida.'); return false; }
+        if (!inputLocalizacion.value.trim()) { showAlert('La localización es obligatoria.'); return false; }
+        return true;
+    }
+
+    /* Cuando se abre el modal: configurar según data-action */
+    modalEl.addEventListener('show.bs.modal', event => {
+        const btn = event.relatedTarget; // botón que abrió el modal
+        const action = btn ? btn.getAttribute('data-action') : 'edit';
+
+        currentAction = action;
+
+        // Obtener valores (puede ser undefined si create)
+        const id = btn ? (btn.getAttribute('data-ip_id') || '') : '';
+        const ip = btn ? (btn.getAttribute('data-ip') || '') : '';
+        const localizacion = btn ? (btn.getAttribute('data-localizacion') || '') : '';
+        const observaciones = btn ? (btn.getAttribute('data-observaciones') || '') : '';
+
+        hideAlert(); // limpiar alert
+
+        if (action === 'create') {
+            modalTitle.textContent = 'Nuevo registro';
+            resetFields();
+
+            formFields.style.display = 'block';
+            deleteMessage.style.display = 'none';
+
+            saveBtn.style.display = 'inline-block';
+            confirmDeleteBtn.style.display = 'none';
+
+            // habilitar campos
+            inputIp.disabled = false;
+            inputLocalizacion.disabled = false;
+            inputObservaciones.disabled = false;
+
+        } else if (action === 'edit') {
+            modalTitle.textContent = 'Editar registro';
+            setFields({ id, ip, localizacion, observaciones });
+
+            formFields.style.display = 'block';
+            deleteMessage.style.display = 'none';
+
+            saveBtn.style.display = 'inline-block';
+            confirmDeleteBtn.style.display = 'none';
+
+            inputIp.disabled = false;
+            inputLocalizacion.disabled = false;
+            inputObservaciones.disabled = false;
+
+        } else if (action === 'delete') {
+            modalTitle.textContent = 'Confirmar borrado';
+            setFields({ id, ip, localizacion, observaciones });
+
+            formFields.style.display = 'none';
+            deleteMessage.style.display = 'block';
+            deleteIpText.textContent = ip || '';
+
+            saveBtn.style.display = 'none';
+            confirmDeleteBtn.style.display = 'inline-block';
+        }
     });
 
-    const deleteModal = document.getElementById('deleteModal');
+    /* Acción GUARDAR (create / edit) usando fetch */
+    saveBtn.addEventListener('click', async () => {
+        hideAlert();
 
+        if (!validateInputs()) return;
 
-    deleteModal.addEventListener('show.bs.modal', event => {
-        // Botón que disparó el modal
-        const button = event.relatedTarget;
+        // Construir payload
+        const payload = {
+            direccionIp: inputIp.value.trim(),
+            localizacionIp: inputLocalizacion.value.trim(),
+            observacionesIp: inputObservaciones.value.trim()
+        };
 
-        // Obtener los valores de los atributos data-*
-        const id = button.getAttribute('data-ip_id');
-        const ip = button.getAttribute('data-ip');
-        const localizacion = button.getAttribute('data-localizacion');
-        const observaciones = button.getAttribute('data-observaciones');
+        try {
+            let url, method = 'POST';
 
-        // Inputs del modal
-        const inputId = deleteModal.querySelector('#inputId');
-        const inputIp = deleteModal.querySelector('#inputIp');
-        const inputLocalizacion = deleteModal.querySelector('#message-text');
-        const inputObservaciones = deleteModal.querySelector('#Observaciones');
-
-        // Asignar valores
-        inputIp.value = ip;
-        inputId.value = id;
-        inputLocalizacion.value = localizacion;
-        inputObservaciones.value = observaciones;
-    });
-const deleteForm = document.getElementById('deleteForm');
-
-    if (deleteForm) {
-        deleteForm.addEventListener('submit', async function(event) {
-            // Evita que el formulario se envíe de la manera tradicional (POST)
-            event.preventDefault(); 
-            
-            // 1. Obtener el ID del campo oculto
-            const idRegistro = document.getElementById('inputId').value;
-            
-            if (!idRegistro) {
-                console.error("No se encontró el ID del registro para borrar.");
+            if (currentAction === 'create') {
+                url = ENDPOINTS.create; // POST para crear
+            } else if (currentAction === 'edit') {
+                url = ENDPOINTS.update; // POST (o PUT) para actualizar
+                // enviar id si tu backend lo requiere
+                payload.idIp = inputId.value;
+            } else {
+                showAlert('Acción inválida para guardar.');
                 return;
             }
 
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-            const url = `http://${ipPuerto}/ips/deleteIp/${idRegistro}`;
-            
-            try {
-                const response = await fetch(url, {
-                    method: 'DELETE', // <-- ¡Esto es lo que hace la magia!
-                    headers: {
-                        'Content-Type': 'application/json' 
-                    }
-                    // No enviamos un cuerpo si el ID va en la URL
-                });
-
-                if (response.ok) {
-                    window.location.href = '/ips/listaIps'; 
-                } else {
-                    // Manejo de error si el servidor falla
-                    const errorData = await response.json();
-                    alert(`Error al borrar: ${errorData.message || 'Error desconocido'}`);
-                }
-
-            } catch (error) {
-                console.error('Fallo en la conexión:', error);
-                alert('Fallo en la conexión con el servidor.');
+            if (res.ok) {
+                // opción: cerrar modal y refrescar lista
+                const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                modalInstance.hide();
+                window.location.href = "/ips/listaIps"; // o recargar / actualizar tabla via JS
+            } else {
+                // manejar body con error opcional
+                let errText = res.statusText;
+                try {
+                    const errObj = await res.json();
+                    errText = errObj.message || JSON.stringify(errObj);
+                } catch (e) { }
+                showAlert(`Error: ${errText}`);
             }
+
+        } catch (err) {
+            console.error(err);
+            showAlert('Error de conexión con el servidor.');
+        }
+    });
+
+    /* Acción BORRAR (confirmDeleteBtn) */
+    confirmDeleteBtn.addEventListener('click', async () => {
+        hideAlert();
+        const id = inputId.value;
+        if (!id) { showAlert('ID no disponible para borrar.'); return; }
+
+        const url = `${ENDPOINTS.deleteBase}/${encodeURIComponent(id)}`;
+
+        try {
+            const res = await fetch(url, { method: 'DELETE' });
+
+            if (res.ok) {
+                const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                modalInstance.hide();
+                window.location.href = "/ips/listaIps";
+            } else {
+                let errText = res.statusText;
+                try {
+                    const errObj = await res.json();
+                    errText = errObj.message || JSON.stringify(errObj);
+                } catch (e) { }
+                showAlert(`Error al borrar: ${errText}`);
+            }
+        } catch (err) {
+            console.error(err);
+            showAlert('Error de conexión al borrar.');
+        }
+    });
+
+    /* --------------------
+       BUSCADOR (cliente)
+       -------------------- */
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const table = document.getElementById('ipsTable');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const countDisplay = document.getElementById('countDisplay');
+
+    // Debounce helper
+    function debounce(fn, wait) {
+        let t = null;
+        return (...args) => {
+            clearTimeout(t);
+            t = setTimeout(() => fn.apply(this, args), wait);
+        };
+    }
+
+    // limpia resaltados anteriores
+    function clearHighlights(row) {
+        row.querySelectorAll('.highlight').forEach(node => {
+            node.classList.remove('highlight');
         });
     }
 
+    // Actualiza el contador de registros visibles / total
+    function updateCount() {
+        const total = rows.length;
+        const visible = rows.filter(r => r.style.display !== 'none').length;
+        countDisplay.textContent = `Mostrando ${visible} de ${total} registros`;
+    }
 
+    // aplica filtro: busca texto en las 3 columnas relevantes
+    function filterTable(query) {
+        const q = (query || '').trim().toLowerCase();
 
+        rows.forEach(row => {
+            clearHighlights(row);
+
+            if (!q) {
+                row.style.display = '';
+                return;
+            }
+
+            const tdIp = row.cells[0]?.textContent.trim().toLowerCase() || '';
+            const tdLocal = row.cells[1]?.textContent.trim().toLowerCase() || '';
+            const tdObs = row.cells[2]?.textContent.trim().toLowerCase() || '';
+
+            const matchIp = tdIp.includes(q);
+            const matchLocal = tdLocal.includes(q);
+            const matchObs = tdObs.includes(q);
+
+            if (matchIp || matchLocal || matchObs) {
+                row.style.display = '';
+
+                // opcional: resaltar la celda que contiene la coincidencia
+                if (matchIp) row.cells[0].classList.add('highlight');
+                if (matchLocal) row.cells[1].classList.add('highlight');
+                if (matchObs) row.cells[2].classList.add('highlight');
+
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // actualizar contador al final del filtrado
+        updateCount();
+    }
+
+    const debouncedFilter = debounce((e) => {
+        filterTable(e.target.value);
+    }, 180);
+
+    // listeners
+    searchInput.addEventListener('input', debouncedFilter);
+
+    clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        filterTable('');
+        searchInput.focus();
+    });
+
+    // Inicializar contador al cargar la página
+    updateCount();
 </script>
+
+
 
 </html>

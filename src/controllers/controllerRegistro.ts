@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 
 import { RegistroRepository } from '../repositories/RegistroRepository';
-import {  isValidIp, getAddressWithPort } from '../utilities/utilities';
+import {  isValidIp } from '../utilities/utilities';
+import { getAddressWithPort } from '../server/server';
 
 
 export const getRecordsIp = async (req: Request, res: Response) => {
@@ -117,24 +118,27 @@ export const help = async (req: Request, res: Response) => {
   <body>
     <div class="container py-4">
   
-        <a href="${getAddressWithPort()}/records/allRecords"> ${getAddressWithPort()}/records/allRecords</a> <br/>
+        <a href="${getAddressWithPort()}/records/allRecords" target="_blank" rel="noopener noreferrer"> ${getAddressWithPort()}/records/allRecords</a> <br/>
 
-        http://${getAddressWithPort()}/records/getRecordsIp/:ip <br/>
+        ${getAddressWithPort()}/records/getRecordsIp/:ip <br/>
 
-        http://${getAddressWithPort()}/records/betweenDates/:date1/:date2   formato fecha YYYY-MM-DD <br/>
+        ${getAddressWithPort()}/records/betweenDates/:date1/:date2   formato fecha YYYY-MM-DD <br/>
 
-        http://${getAddressWithPort()}/records/betweenDatesIp/:date1/:date2/:ip <br/>
+        ${getAddressWithPort()}/records/betweenDatesIp/:date1/:date2/:ip <br/>
 
-        http://${getAddressWithPort()}/records/lastNRecordsOfIp/:ip/:nums <br/>
+        ${getAddressWithPort()}/records/lastNRecordsOfIp/:ip/:nums <br/>
     
-        http://${getAddressWithPort()}/records/contadorIp/:ip
+        ${getAddressWithPort()}/records/contadorIp/:ip
 
-        http://${getAddressWithPort()}/records/consultaIp/:ip <br/>
+        ${getAddressWithPort()}/records/consultaIp/:ip <br/>
     
-        <a href="${getAddressWithPort()}/ips/listaIps"> ${getAddressWithPort()}/ips/listaIps</a> <br/> 
+        <a href="${getAddressWithPort()}/ips/listaIps" target="_blank" rel="noopener noreferrer"> CRUD de ips</a> <br/> 
+
+        <a href="${getAddressWithPort()}/lista" target="_blank" rel="noopener noreferrer"> listado con niveles y paginas impresas <br/> 
         
+        <a href="${getAddressWithPort()}/chart" target="_blank" rel="noopener noreferrer">  Gráfico <br/>
         
-        <a href="${getAddressWithPort()}/records/help"> ${getAddressWithPort()}/records/help</a> Esta misma página <br/>
+        <a href="${getAddressWithPort()}" target="_blank" rel="noopener noreferrer">  Volver <br/>
         
       </div>
         </body>

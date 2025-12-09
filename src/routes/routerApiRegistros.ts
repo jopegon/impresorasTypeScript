@@ -11,14 +11,6 @@ import { allRecords, betweenDatesIpRecords, betweenDatesRecords, getIp, getRecor
     routerRegistro.get('/betweenDatesIp/:date1/:date2/:ip', betweenDatesIpRecords) 
     routerRegistro.get('/lastNRecordsOfIp/:ip/:nums', lastNRecordsOfIp) 
 
-    routerRegistro.get('/help', help);
-    /*
-    routerIP.get('/allIps', allIp);
-    routerIP.get('/getIp/:id', getIp);
-    routerIP.post('/addIp',addIp);
-    routerIP.delete('/deleteIp/:id', deleteIp);
-    routerIP.put('/updateIp/:id',updateIp);
-*/
     routerRegistro.get('/getRegistrosIp/:ip', getIp);
 
 export default routerRegistro;

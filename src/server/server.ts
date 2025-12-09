@@ -3,55 +3,48 @@ import cors from "cors";
 import routerImpresoras from "../routes/routerImpresoras";
 import path from "node:path";
 import routerRegistro from "../routes/routerApiRegistros";
-
+import os from "node:os";
 import routerChart from "../routes/routerChart";
 import routerIps from "../routes/routerIps";
 import favicon from 'serve-favicon';
-import { getLocalIP } from "../utilities/utilities";
 
+
+export const getLocalIP = (): string  => {
+    const interfaces = os.networkInterfaces();
+
+    for (const name of Object.keys(interfaces)) {
+        const iface = interfaces[name];
+
+        if (!iface) continue;
+
+        for (const alias of iface) {
+            // Ignorar direcciones internas (ej. 127.0.0.1) y solo IPv4
+            if (alias.family === "IPv4" && !alias.internal) {
+                return alias.address;
+            }
+        }
+    }
+    return 'undefined';
+};
+
+
+let DEFAULT_PORT:number = 0;
+let DEFAULT_IP: string='';
+
+
+export const getAddressWithPort = (): string => {
+    return `http://${DEFAULT_IP}:${DEFAULT_PORT}`;
+};
 
 export class Server {
 
     private readonly app: Application;
     private readonly port: number;
-
-    /*  lo dejo en comentarios por si en el futuro quiero configurar CORS de forma más específica
-        private corsOptions = {
-            // Permitir orígenes específicos
-            origin: [
-                'http://localhost:3000',
-                'http://localhost:4200',  // Angular dev server
-                'http://localhost:5173',  // Vite dev server
-                'http://localhost:8080',  // Otros frontends
-                'https://midominio.com',  // Producción
-            ],
-    
-            // Métodos HTTP permitidos
-            methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    
-            // Headers permitidos
-            allowedHeaders: [
-                'Origin',
-                'X-Requested-With',
-                'Content-Type',
-                'Accept',
-                'Authorization',
-                'Cache-Control'
-            ],
-    
-            // Permitir envío de cookies
-            credentials: true,
-    
-            // Cache de preflight requests
-            optionsSuccessStatus: 200,
-            preflightContinue: false
-        };
-    
-    */
+    private readonly ip: string | undefined;
 
     constructor(port: number) {
         this.app = express();
-        this.port = port;
+        this.port = port; 
         this.midlewares();
         this.routes();
         this.seteos();
@@ -114,6 +107,8 @@ export class Server {
     public listen() {
         try {
             this.app.listen(this.port, () => {
+                DEFAULT_PORT=this.port;
+                DEFAULT_IP=getLocalIP();
                 console.log(`✅ Servidor HTTP en http://${getLocalIP()}:${this.port}`);
             })
         }

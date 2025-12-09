@@ -52,6 +52,7 @@ tr:hover {background-color: #D6EEEE;}
     <th>Cyan</th>
     <th>Amarillo</th>
     <th>Rojo</th>
+    <th>Estadística</th>
   </tr> 
 </thead>`
       ;

@@ -1,25 +1,25 @@
 import { Impresora } from "../clases/Impresora";
 import db from "../config/db";
-import { InterfaceIp } from "../models/IpInterface";
+import { IpInterface } from "../models/IpInterface";
 
 
 
 export class IpRepository {
 
-  static create(ip: string, localizacion: string, observaciones?: string) {
+  static add(ip: IpInterface) {
     const stmt = db.prepare(`
       INSERT INTO ips (ip, localizacion, observaciones)
       VALUES (?, ?, ?)
     `);
-    const result = stmt.run(ip, localizacion, observaciones || null);
-    return { id: result.lastInsertRowid as number, ip, localizacion, observaciones };
+    const result = stmt.run(ip.ip, ip.localizacion, ip.observaciones || null);
+    return { id: result.lastInsertRowid as number};
   }
 
 
   static findAllPrinters(): Impresora[] {
-    let resultadoConsulta: InterfaceIp[] = [];
+    let resultadoConsulta: IpInterface[] = [];
     let impresoras: Impresora[] = [];
-    resultadoConsulta = db.prepare("SELECT * FROM ips").all() as InterfaceIp[];
+    resultadoConsulta = db.prepare("SELECT * FROM ips").all() as IpInterface[];
 
     for (let resultado of resultadoConsulta) {
       impresoras.push(new Impresora(resultado.ip, resultado.localizacion));
@@ -28,24 +28,24 @@ export class IpRepository {
     return impresoras;
   }
 
-  static findAllIPs(): InterfaceIp[] {
-    let listadoIps: InterfaceIp[] = [];
-    listadoIps = db.prepare("SELECT * FROM ips").all() as InterfaceIp[];
+  static findAllIPs(): IpInterface[] {
+    let listadoIps: IpInterface[] = [];
+    listadoIps = db.prepare("SELECT * FROM ips").all() as IpInterface[];
     return listadoIps;
   }
 
-  static fingAllIpsDateNumber(n: number): InterfaceIp[] {
-    let listadoIps: InterfaceIp[] = [];
-    listadoIps = db.prepare("SELECT * FROM registros WHERE fecha BETWEEN DATE('now', ?' days') AND DATE('now') ORDER BY fecha DESC ;").all(n) as InterfaceIp[];
+  static fingAllIpsDateNumber(n: number): IpInterface[] {
+    let listadoIps: IpInterface[] = [];
+    listadoIps = db.prepare("SELECT * FROM registros WHERE fecha BETWEEN DATE('now', ?' days') AND DATE('now') ORDER BY fecha DESC ;").all(n) as IpInterface[];
     return listadoIps;
   }
 
-  static findByIp(ip: string): InterfaceIp | undefined {
-    return db.prepare("SELECT * FROM ips WHERE ip = ?").get(ip) as InterfaceIp | undefined;
+  static findByIp(ip: string): IpInterface | undefined {
+    return db.prepare("SELECT * FROM ips WHERE ip = ?").get(ip) as IpInterface | undefined;
   }
 
-  static findByIpId(id: number): InterfaceIp | undefined {
-    return db.prepare("SELECT * FROM ips WHERE id = ?").get(id) as InterfaceIp | undefined;
+  static findByIpId(id: number): IpInterface | undefined {
+    return db.prepare("SELECT * FROM ips WHERE id = ?").get(id) as IpInterface | undefined;
   }
 
 
@@ -60,7 +60,7 @@ export class IpRepository {
     }
   }
 
-  static update({ id, ip, localizacion, observaciones }: InterfaceIp) {
+  static update({ id, ip, localizacion, observaciones }: IpInterface) {
     const stmt = db.prepare(`
       UPDATE ips
       SET ip = ?, localizacion = ?, observaciones = ?

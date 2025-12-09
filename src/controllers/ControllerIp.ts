@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { IpRepository } from '../repositories/IpRepository';
-import { InterfaceIp } from '../models/IpInterface';
+import { IpInterface } from '../models/IpInterface';
+import { getAddressWithPort } from '../server/server';
 
 export class ClassControllerIp {
 
@@ -9,7 +10,7 @@ export class ClassControllerIp {
 
     try {
       // Consultar todas las impresoras
-      const listaIps: InterfaceIp[] = IpRepository.findAllIPs();
+      const listaIps: IpInterface[] = IpRepository.findAllIPs();
 
       // Verificar si hay registros en la tabla
       if (listaIps.length === 0) {
@@ -19,7 +20,7 @@ export class ClassControllerIp {
       res.render('listadoIps', {
         title: 'Listado de direcciones IP',
         ips: listaIps,
-        ipSeverPort: req.hostname+':' + req.socket.localPort,
+        ipSeverPort: getAddressWithPort(),
       });
 
     } catch (error) {
@@ -28,12 +29,34 @@ export class ClassControllerIp {
     }
   };
 
+  public static addIp = async (req: Request, res: Response): Promise<void> => {
+
+    const { direccionIp, localizacionIp, observacionesIp } = req.body;
+
+    try {
+      const newIp: IpInterface = {
+        id: 9000, // El ID se asignará automáticamente en el repositorio
+        ip: direccionIp,
+        localizacion: localizacionIp,
+        observaciones: observacionesIp,
+      };
+
+      IpRepository.add(newIp);
+
+      //res.status(201).json({ message: 'Impresora agregada correctamente.', ip: newIp });
+      res.redirect(302, '/ips/listaIps');
+    } catch (error) {
+      console.error('Error al agregar la impresora:', error);
+      res.status(500).json({ error: 'Error interno del servidor al agregar la impresora.' });
+    }
+  };  
+
   public static updateIp = async (req: Request, res: Response): Promise<void> => {
 
     const {  idIp, direccionIp, localizacionIp, observacionesIp } = req.body;
 
     try {
-      const ipToUpdate: InterfaceIp | undefined  = IpRepository.findByIpId(idIp);
+      const ipToUpdate: IpInterface | undefined  = IpRepository.findByIpId(idIp);
 
       if (!ipToUpdate) {
         res.status(404).json({ message: 'Impresora no encontrada.' });
@@ -61,7 +84,7 @@ export class ClassControllerIp {
     const id:number = Number.parseInt(req.params.id, 10);
     try {
 
-      const ipToDelete: InterfaceIp | undefined = IpRepository.findByIpId(id);
+      const ipToDelete: IpInterface | undefined = IpRepository.findByIpId(id);
 
       if (!ipToDelete) {
         res.status(404).json({ message: 'Impresora no encontrada.' });
