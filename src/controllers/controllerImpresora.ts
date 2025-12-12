@@ -112,7 +112,7 @@ export const tablaIps = async (request: Request, response: Response) => {
     try {
         let listaImpresoras: Impresora[] = [];
 
-        let consultaImpresora: ConsultaImpresora = new ConsultaImpresora();
+
 
         let promesas: Promise<void>[] = [];
 
@@ -130,11 +130,10 @@ export const tablaIps = async (request: Request, response: Response) => {
         });
         await Promise.all(promesas);
 
-
-
         response.render('tablaIps', {
             'title': 'Tabla de IPs de impresoras',
-            listaImpresoras: listaImpresoras
+            listaImpresoras: listaImpresoras,
+            ipSeverPort: getAddressWithPort()
         });
     }
     catch (error) {
