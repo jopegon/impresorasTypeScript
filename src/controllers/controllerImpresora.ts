@@ -1,11 +1,10 @@
 import path from "node:path";
 import { Impresora } from "../clases/Impresora";
-
 import { CadenasVistaImpresoras } from "./CadenasVistaImpresoras";
 import { ConsultaImpresora } from "../services/ConsultaImpresora";
 import { Request, RequestHandler, Response } from 'express';
 import { IpRepository } from "../repositories/IpRepository";
-
+import { getAddressWithPort } from "../server/server";
 
 
 export const saluda = async (req: Request, res: Response) => {
@@ -93,7 +92,6 @@ export const muestraInfo = async (request: Request, response: Response) => {
 export const paginaInicio: RequestHandler = (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, "../../public/views", "/indexF.html"));
 };
-
 
 
 
